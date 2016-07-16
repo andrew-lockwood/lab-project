@@ -57,11 +57,11 @@ def createURL (year, article):
 def createArticle (article): 
 	length = len(str(article))
 
-	if length == 1: 			return '0000' + str(article)
-	if length == 2:				return '000' + str(article)
-	if length == 3:				return '00' + str(article)
-	if length == 4: 			return '0' + str(article)
-	if length == 5: 			return str(article)
+	if length == 1: 		return '0000' + str(article)
+	if length == 2:			return '000' + str(article)
+	if length == 3:			return '00' + str(article)
+	if length == 4: 		return '0' + str(article)
+	if length == 5: 		return str(article)
 
 ##############################################################################
 #
