@@ -36,7 +36,7 @@ sys.setdefaultencoding('utf-8')
 def checkExistence (url):
 	r = requests.head(url)
 	if r.status_code == 200: 	return url		# exists
-	else: 						return None		# doesn't exist
+	else: 				return None		# doesn't exist
 
 def checkLength (year, article): 
 	if len(year) != 4:
