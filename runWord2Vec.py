@@ -1,48 +1,88 @@
+###############################################################################
+# 
+# Creates a model object that can be trained using gensims word2vec. At 
+# initializtion, it only requires a single .txt file corpus.  
+# 
+###############################################################################
 
-
-# Import the config file and set up logging 
-import config 
 import logging
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-import csv
-import nltk.data
+
 import gensim.models
-import re
 
-def load_sentences(): 
-	sentences = []
-	with open("/home/andrew/lab_project/parsed_files/parsed_pets.csv") as f:
-		r = csv.reader(f)
-		for row in r: 
-			sentences.append(row)
-	return sentences
+import config 
+import util
 
-# sentences = load_sentences()
+import sys
+import os 
 
-def minor_parse():
-	with open("/home/andrew/lab_project/corpus/Pets.txt") as f: 
-		with open("/home/andrew/lab_project/corpus/minor_pets.txt", 'w') as new_f:
-			for line in f.readlines():
-				new_f.write(re.sub("[^a-zA-Z \n]","", line))
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
-minor_parse()
+class Model (object): 
+    # Takes an already parsed text file from the createcorpus class 
+    def __init__ (self, size, min_count, file, save = 'mymodel'):
+        self.min_count = min_count
+        self.size = size
+        self.file = file 
+        self.save = os.path.join(config.mDir, save)
 
-model = gensim.models.Word2Vec()
+    def train_model (self):
+        self.model.train(self.sentences)
+        self.model.save(self.save)
 
-sentences = gensim.models.word2vec.LineSentence("/home/andrew/lab_project/corpus/minor_pets.txt")
-model.build_vocab(sentences, keep_raw_vocab = True)
-model.train(sentences)
+    def create_model (self):
+        # This only needs to be done once during the initialization of the model 
+        model = gensim.models.Word2Vec(size = self.size, \
+                    min_count = self.min_count)   
+        sentences = gensim.models.word2vec.LineSentence(file)
+        model.build_vocab(sentences, keep_raw_vocab = False)
+        
+        self.sentences = sentences
+        self.model = model
 
-# for sentence in sentences: 
-#	print str(sentence)
+        self.train_model()        # Do an initial round of training 
 
-# model.save('NAME.txt')
+    def finalize_training (self): 
+        self.model.init_sims(replace = True)
 
-print model.n_similarity(['pet'], ['animal'])
+    # Use this method to skip the create_model step -- allows to resume training
+    # ONLY if finalize_training has not been called on the model. Otherwise, it 
+    # only allows querying
+    def load_model (self): 
+        self.model = gensim.models.Word2Vec.load(self.save)
 
-sentences2 = gensim.models.word2vec.LineSentence("/home/andrew/lab_project/corpus/Artificial Intelligence.txt")
-sentences2.sort()
-model.build_vocab(sentences2, keep_raw_vocab = True)
-model.train(sentences2)
+    def similar_words (self, word, N = 10):
+        print self.model.similar_by_word(word, topn = N)
 
-print model.n_similarity(['pet'], ['animal'])
+    def model_info (self): 
+        num_w = self.model.syn0.shape[0]
+        num_f = self.model.syn0.shape[1]
+
+        print"--------------------------------------"
+        print   "There are " + str(num_w) + \
+                " words with feature vectors of size " + str(num_f)
+        print"--------------------------------------"
+
+    # Still in the process of working on data clustering 
+    """
+    def cluster_model (self): 
+        word_vectors = self.model.syn0
+        num_clusters = word_vectors[0] / 5
+
+        kmeans_clustering = KMeans (n_clusters = num_clusters)
+        idx = kmeans_clustering.fit_predict(word_vectors)
+
+        word_centroid_map = dict(zip( model.index2word, idx ))
+    """
+
+file = 'mycorpus.txt'
+file_dir = os.path.join(config.cDir, file)
+size = 300 
+min_count = 5
+
+# model = Model(size, min_count, file_dir)
+# model.create_model()
+# model.model_info()
+
+
