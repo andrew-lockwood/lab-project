@@ -10,20 +10,27 @@
 # 
 ##############################################################################
 
+
+import webInterface
+import osInterface
 import config
+
+import util 
 from collections import defaultdict, Counter
 from bs4 import BeautifulSoup
-import requests
+
 import time
 import sys
 import csv
 import os
 import re
 
+# set to utf-8 to handle miscellaneous characters 
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
 ###############################################################################
+#
 #   checkXML, checkURL, createXML, createURL, and createArticle
 #
 # All helper methods for the writeData method later on in the file.  
@@ -33,7 +40,6 @@ sys.setdefaultencoding('utf-8')
 # and returns a string (useful for incrementing).  
 #
 ##############################################################################
-
 def checkExistence (url):
     r = requests.head(url)
     if r.status_code == 200:    return url      # exists
@@ -64,144 +70,6 @@ def createArticle (article):
     if length == 4:             return '0' + str(article)
     if length == 5:             return str(article)
 
-##############################################################################
-#
-#   saveCounter, saveDictionary, loadCounter, loadDictionary, 
-#       mergeCounters, and mergeDictionaries
-#
-# First four methods deal with data retrieval and storage on the disk. 
-# The merge methods are for taking already made dictionaries, loading 
-# them in memory into a larger dictionary, then storing them back on 
-# the disk.  Those can also be access from the save/load methods. 
-#
-##############################################################################
-
-def saveCounter (counter, fileName, saveDir):
-    c = os.path.join(config.dDir, saveDir, fileName + '_c.csv')
-    w = csv.writer(open(c , 'w'))
-    for key, value in counter.iteritems(): 
-        w.writerow([key, value])
-    print 'Saved file "' + fileName + '_c.csv" in' + config.dDir + saveDir
-
-def saveDictionary (dictionary, fileName, saveDir): 
-    d = os.path.join(config.dDir, saveDir, fileName + '_d.csv')
-    w = csv.writer(open(d , 'w'))
-    for key, value in dictionary.iteritems(): 
-        w.writerow([key, value])
-    print 'Saved file "' + fileName + '_d.csv" in' + config.dDir + saveDir
-
-def saveSet (output, fileName):
-    d = os.path.join(config.oDir, fileName + '.csv')
-    w = csv.writer(open(d , 'w'))
-    for file in output:
-        w.writerow([file])
-    print 'Saved file "' + fileName + '.csv" in' + config.oDir
-
-def loadCounter (fileName, saveDir): 
-    if '_c.csv' in fileName: 
-        d = os.path.join(config.dDir, saveDir, fileName)
-    else:   
-        d = os.path.join(config.dDir, saveDir, fileName + '_c.csv')
-    counter = Counter()
-    for key, value in csv.reader(open(d)):
-        counter[key.decode('utf8')] = int(value)
-
-    return counter
-
-def loadDictionary (fileName, saveDir):
-    if '_d.csv' in fileName: 
-        d = os.path.join(config.dDir, saveDir, fileName)
-    else:   
-        d = os.path.join(config.dDir, saveDir, fileName + '_d.csv')
-    dictionary = defaultdict(list)
-    for key, values in csv.reader(open(d)):
-        for value in re.sub("[^.0-9a-z_ ]", "", values).split():
-            dictionary[key].append(value)
-
-    return dictionary
-
-def loadSet (fileName): 
-    d = os.path.join(config.oDir, fileName + '.csv')
-    output = set()
-    for line in csv.reader(open(d)):
-        output.add(line[0])
-
-    return output
-
-def mergeCounters (key, saveDir): 
-    # key can either be 'articles' or 'keywords'
-    d = os.path.join(config.dDir, saveDir)
-    counter = Counter()
-    for file in os.listdir(d):
-        if key in file: 
-            if '_d' in file or 'merged' in file: 
-                continue
-            else: 
-                counter += loadCounter(file, saveDir)
-
-    saveCounter(counter, 'merged_' + key, saveDir)
-
-def mergeDictionaries (key, saveDir): 
-    # key can either be 'articles' or 'keywords'
-    d = os.path.join(config.dDir, saveDir)
-    dictionary = defaultdict(list)
-    for file in os.listdir(d):
-        if key in file: 
-            if '_c' in file or 'merged' in file: 
-                continue
-            else:
-                addDict = loadDictionary(file, saveDir)
-                for word, file_list in addDict.iteritems():
-                    for file in file_list:
-                        dictionary[word].append(file)
-
-    saveDictionary(dictionary, 'merged_' + key, saveDir)
-
-def merge (key, saveDir = None): 
-    if key == 'keywords': 
-        saveDir = 'kwd_data'
-    if key == 'types': 
-        saveDir = 'type_data'
-    mergeCounters(key, saveDir)
-    mergeDictionaries(key, saveDir)
-
-##############################################################################
-#
-#   getFileSize, getFileCount, and getTotalFileSize
-#
-# All three methods deal with grabbing information about files in the 
-# project directory. getFileCount only cares about '.xml' files, as it 
-# is used for the progress bar for the find methods below. 
-#
-##############################################################################
-
-def getFileCount ():
-    total = 0
-    rd = config.rDir
-    for path, dirs, files in os.walk(rd):
-        for file in files:
-            if '.xml' not in file:
-                continue
-            else:
-                total += 1
-
-    return total
-
-def getTotalFileSize (): 
-    total = 0.0
-    rd = config.rDir
-    for path, dirs, files in os.walk(rd):
-        for file in files:
-            file_name = os.path.join(path, file)
-            total += os.path.getsize(file_name)
-
-    return float(total / 1000000)
-
-def getFileSize (xml):
-    h = requests.head(xml)
-    file_size = h.headers['content-length']
-    return file_size
-
 ###############################################################################
 #
 #   and getTitlesFromKeys
@@ -226,7 +94,7 @@ def getKeysGreaterThan (key, saveDir, x = None):
     if flag > 0: 
         mergeCounters(key)
 
-    c = loadCounter('merged_' + key, saveDir)
+    c = osInterface.loadCounter('merged_' + key, saveDir)
     cnt = Counter()
     for title, count in c.iteritems(): 
         if count > x: 
@@ -242,15 +110,15 @@ def getTitlesFromKeys (key, saveDir, x = None):
         for title in dictionary[title]:
             titles.add(title)
 
-    saveSet (titles, 'titleSetFrom' + str(x) + key)
+    osInterface.saveSet (titles, 'titleSetFrom' + str(x) + key)
 
     return str(len(titles))
 
 ##############################################################################
 #
-#   printMostCommonKeys, printInfo
+#   printMostCommonKeys, util.printInfo
 #
-# Prints information to the user based on the methods below. printInfo 
+# Prints information to the user based on the methods below. util.printInfo 
 # is only a shortened call version of printProgress.
 #
 ##############################################################################
@@ -265,7 +133,7 @@ def printKeysGreaterThan (key, x = None):
         x = 0
 
     d = getKeysGreaterThan(key, saveDir, x)
-    f = getFileCount()
+    f = osInterface.getFileCount()
     t = getTitlesFromKeys(key, saveDir, x)
     dL = len(d)
 
@@ -274,7 +142,7 @@ def printKeysGreaterThan (key, x = None):
     print "These " + str(dL) + " " + key + " appear in " + t + " articles"
 
     print"--------------------------------------"
-    lim = 10    # This value controls the number of keys output by this function
+    lim = 30    # Controls the number of keys output by this function
                 # Default value is 10
     if dL > lim: 
         print "The " + str(lim) + " most common " + key + " are..."
@@ -304,10 +172,6 @@ def printKeysGreaterThan (key, x = None):
 
     print"--------------------------------------"
 
-def printInfo (iteration, total):
-    printProgress (iteration, total, prefix = 'Progress:', \
-                    suffix = 'Complete', barLength = 50)
-
 ##############################################################################
 # 
 # Most important for interfacing with the website.  writeData takes a 
@@ -323,15 +187,17 @@ def writeData (year):
     name = 0
     nullURL = 0
 
-    file_total = getFileCount()
-    file_size = getTotalFileSize()
-    print 'Current usage in project directory: ' + str(file_size) + \
+    file_total = osInterface.getFileCount()
+    file_size = osInterface.getTotalFileSize()
+    print   'Current usage in project directory: ' + \
+            str(round(file_size, 2)) + \
             ' bytes in ' + str(file_total) + ' files' 
 
     i = 0
     while True: 
-        url = createURL(year, createArticle(name))
-        xml = createXML(year, createArticle(name))
+        title = webInterface.createArticle(name)
+        url = webInterface.createURL(year, title)
+        xml = webInterface.createXML(year, title)
         if url == None: 
             nullURL += 1
             if nullURL > 3: 
@@ -341,8 +207,8 @@ def writeData (year):
             continue
         else:                       # write the XML to the disk 
             nullURL = 0
-            title = year + '_' + createArticle(name) + '.xml'
-            file = os.path.join(config.rDir, year, title)
+            file_name = year + '_' + title + '.xml'
+            file = os.path.join(config.rDir, year, file_name)
             with open((file), 'w') as f: 
                 r = requests.get(xml)
                 f.write(r.content)
@@ -352,9 +218,9 @@ def writeData (year):
                 sys.stdout.flush()
 
     print '\n'
-    newFile_size = getTotalFileSize() - file_size
-    newFile_total = getFileCount() - file_total
-    print 'Added to project directory: ' + str(newFile_size) + \
+    newFile_size = osInterface.getTotalFileSize() - file_size
+    newFile_total = osInterface.getFileCount() - file_total
+    print 'Added to project directory: ' + str(round(newFile_size, 2)) + \
             ' bytes in ' + str(newFile_total) + ' files'
 
 def writeAll ():
@@ -382,7 +248,7 @@ def findKeyWords (year):
     i = 0
     l = len(os.listdir(d))
     print year + ": Finding keywords from " + str(l) + " articles"
-    printInfo(i, l)
+    util.printInfo(i, l)
 
     for file_name in os.listdir(d):
         xml_data = open(os.path.join(d, file_name), 'r')
@@ -392,10 +258,10 @@ def findKeyWords (year):
             dictionary[keyword.text.lower()].append(file_name)
 
         i += 1
-        printInfo(i, l)
+        util.printInfo(i, l)
 
-    saveCounter(counter, year + '_keywords', 'kwd_data')
-    saveDictionary(dictionary, year + '_keywords', 'kwd_data')
+    osInterface.saveCounter(counter, year + '_keywords', 'kwd_data')
+    osInterface.saveDictionary(dictionary, year + '_keywords', 'kwd_data')
 
 def findTypes (year): 
     counter = Counter()
@@ -405,7 +271,7 @@ def findTypes (year):
     i = 0
     l = len(os.listdir(d))
     print year + ": Finding types from " + str(l) + " articles"
-    printInfo(i, l)
+    util.printInfo(i, l)
 
     for file_name in os.listdir(d):
         xml_data = open(os.path.join(d, file_name), 'r')
@@ -414,10 +280,10 @@ def findTypes (year):
             counter[subject.text.lower()] += 1
             dictionary[subject.text.lower()].append(file_name)
         i += 1
-        printInfo(i, l)
+        util.printInfo(i, l)
 
-    saveCounter(counter, year + '_types', 'type_data')
-    saveDictionary(dictionary, year + '_types', 'type_data')
+    osInterface.saveCounter(counter, year + '_types', 'type_data')
+    osInterface.saveDictionary(dictionary, year + '_types', 'type_data')
 
 def findAll (key):
     start_time = time.time()
@@ -435,37 +301,6 @@ def findAll (key):
     m, s = divmod(seconds, 60)
     h, m = divmod(m, 60)
     print "Took a total of %d:%02d:%02d to find and merge" % (h, m, s) 
-
-##############################################################################
-#
-# Provides a nice progress bar within the terminal. printInfo is a 
-# helper method that shortens the declaration in the methods above 
-# (prefix/suffix/barLength never change).
-#   NOTE: adapted from Vladimir Ignatyev's code found on stackoverflow
-#
-##############################################################################
-
-def printProgress (iteration, total, prefix = '', suffix = '', \
-                    decimals = 2, barLength = 100):
-    """
-        Call in a loop to create terminal progress bar
-            iteration   - Required  : current iteration (Int)
-            total       - Required  : total iterations (Int)
-            prefix      - Optional  : prefix string (Str)
-            suffix      - Optional  : suffix string (Str)
-            decimals    - Optional  : number of decimals in percent complete (Int)
-            barLength   - Optional  : character length of bar (Int)
-    """
-    filledLength    = int(round(barLength * iteration / float(total)))
-    percents        = round(100.00 * (iteration / float(total)), decimals)
-    bar             = '|' * filledLength + '-' * (barLength - filledLength)
-    sys.stdout.write('\r%s |%s| %s%s %s' % (prefix, bar, percents, '%', suffix)),
-    sys.stdout.flush()
-    if iteration == total:
-        sys.stdout.write('\n')
-        sys.stdout.flush()
-
-
 
 def run ():
     """
@@ -492,15 +327,16 @@ def run ():
             of key occurence for it to be printed.  If left empty, it gets 
             them all. If there are more than 10 keys, it will only print 
             out the 10 most common.  
+        NOTE:   It can print out more or less than the 10 most common 
+                by modifying the value 'lim' in printKeysGreaterThan
 
     """
     # Once the root directory, save directory, and output directory are set
     # calling these three functions will do all the work
 
-    # writeData()
+    writeData('2010')
     # findAll('types')
-    findAll('keywords')
-
-    # printKeysGreaterThan('types')
+    # findAll('keywords')
+    # printKeysGreaterThan('keywords', 200)
 
 run()
