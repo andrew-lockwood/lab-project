@@ -62,7 +62,7 @@ def getKeysGreaterThan (key, saveDir, x = None):
 
 def getTitlesFromKeys (key, saveDir, x = None): 
     counter = getKeysGreaterThan(key, saveDir, x)
-    dictionary = loadDictionary('merged_' + key, saveDir)
+    dictionary = osInterface.loadDictionary('merged_' + key, saveDir)
     titles = set()
     for title, count in counter.iteritems(): 
         for title in dictionary[title]:
@@ -292,9 +292,8 @@ def run ():
     # Once the root directory, save directory, and output directory are set
     # calling these three functions will do all the work
 
-    writeData('2010')
+    # writeData('2010')
     # findAll('types')
     # findAll('keywords')
-    # printKeysGreaterThan('keywords', 200)
 
 run()
