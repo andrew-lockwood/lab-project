@@ -105,6 +105,15 @@ class CompareModels(object):
         self.m1.model_info()
         self.m2.model_info()
 
+    def jaccard_score (self, word):
+        m1_list = self.m1.similar_words(word, N = self.N)
+        m2_list = self.m2.similar_words(word, N = self.N)
+
+        print m1_list
+
+
+    """
+    #old method of scoring two sets 
     def score(self, word):
         sim_words = 0 
         sim_score = 0
@@ -123,7 +132,7 @@ class CompareModels(object):
 
         #uncomment this to get specific information about a word to visualize 
         #differences the number of features makes 
-        """
+        
         print "words in common: " + str(sim_words) 
         print "score of words in common: " + str(sim_score/float(self.N))
         print "-----------------------------------------"
@@ -132,9 +141,10 @@ class CompareModels(object):
         print "-----------------------------------------"
         print "model 2 words -"
         print self.m2.similar_words(word, N = self.N)
-        """
+        
 
         return sim_score/float(self.N)
+    """
 
     def load_frequency_dict (self, total_keys):
         #loads a .csv already made in the createCorpus class 
@@ -157,18 +167,21 @@ def model_corpus(size):
 
     for key in model.get_vocab():
         print key
+"""
 
 def score_corpus (total_keys): 
     test_scores = Counter()
     compare = CompareModels (model1 = '50model', model2 = '300model', N = 20)
     compare.load_models()
+    compare.jaccard_score('brain')
+    """
     test_keys = compare.load_frequency_dict(total_keys)
     b = Progress_Bar(len(test_keys))
     for word, value in test_keys:
         test_scores[word] = compare.score(word)
         b.step()
-
+    """
 
 score_corpus(1000)
-"""
+
 
