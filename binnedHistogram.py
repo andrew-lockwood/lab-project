@@ -1,27 +1,20 @@
-#######################################################################
-#
-# These variables set up the path for the csv files used below. The 
-# first is strictly a word count of the corpus, and the second is a 
-# score of two models from another file. 
+# Takes data from the scoring of two models and displays it as a 
+# binned histogram. Pylab doesn't have to be installed as results
+# can be output to a terminal.
+
+# CSV files used for creation. Modify the second when looking at 
+# different scoring sets. Keep the first updated with the parsing 
+# method, otherwise the wrong frequencies will fall in the wrong
+# bin
 #   NOTE: the second file has the header 
 #          "word, union, intersection, jaccard index, jaccard distance"
-#
-#######################################################################
-
 frequency_load_path = \
 '/media/removable/SD Card/frontiers_data/models/word2vec_scores/epochtraining_frequencies.csv'
 jaccard_load_path = \
 '/media/removable/SD Card/frontiers_data/models/word2vec_scores/epochtraining_scores_n15.csv'
 
-#######################################################################
-#
 # File dependencies: The first two need to be installed, the second 
-# four are all native to python. P
-#   NOTE: Pylab >>> numpy in size, if only numpy is installed the 
-#           code will still work, you just can't display the histogram
-#
-#######################################################################
-
+# four are all native to python.
 import numpy as np
 import pylab as P
 
@@ -31,16 +24,11 @@ import math
 import csv
 import sys
 
-#######################################################################
-#
 # Creates several dictionaries and arrays with the ultimate goal of 
 # binning the Jaccard distances in the correct way. 
 # It basically does this by mapping 'word --> frequencies' then 
 # 'frequencies --> Jaccard Distances', and finally combining the 
 # two in the order of a sorted frequency array. It works. 
-#
-#######################################################################
-
 class BinnedFrequencyData (object): 
     def __init__ (self, min_count = 5, \
                         f_load_path = frequency_load_path, \
@@ -122,8 +110,8 @@ class BinnedFrequencyData (object):
             f_mean = np.mean(y)
             self.frequency_averages.append(f_mean)
 
-
     def graph_data (self, n): 
+        """Returns data used for graphing."""
         first_n_bins = []
         i = 0
         for x in self.jaccard_bins: 
@@ -169,20 +157,23 @@ class BinnedFrequencyData (object):
                         (bin_total_words, self.total_words, \
                         bin_total_words/float(self.total_words)))
 
+# For example: 
+total_bins = 200
+bin_subset = 50
 
 # If bin_num <= n, every bin will be represented.
 # For n < bin_num, only the largest n bins will be represented.
-def display_boxplot (bin_num = 200, n = 50): 
+def display_boxplot (bin_num = total_bins, n = bin_subset): 
     """Prints a boxplot in a seperate window and the bin summary in the terminal."""
     fd = BinnedFrequencyData(bin_num = bin_num)
-    fd.display_bin_summary(n)
-    P.boxplot(fd.graph_data(n), notch = False, showmeans = True, showfliers = True)
+    fd.display_bin_summary(n)   # prints to command line
+    P.boxplot(fd.graph_data(n), notch = False, \
+                showmeans = True, showfliers = False)
     P.title('EPOCH TRAINING: 50 by 300 features with 15 similar words')
-    P.ylabel('Jaccard Index')
-    P.xlabel('bins')
-    P.ylim([0, 1])
+    P.ylabel('Jaccard Index')   # Doesn't change
+    P.xlabel('bins')            # Doesn't change
+    P.ylim([0, 1])              # Set to show all range of Jaccard values
     P.show()
-
 
 # If pylab is not installed, run this: 
 #fd = BinnedFrequencyData(bin_num = bin_num)

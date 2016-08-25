@@ -10,12 +10,10 @@
 # 
 ##############################################################################
 
-
-root_dir =  '/media/removable/SD Card/frontiers_data/'
-data_dir =  '/media/removable/SD Card/frontiers_data/data/'
-base_url =  'http://journal.frontiersin.org/article/10.3389/fpsyg.'
-
-import osInterface
+root_dir =      '/media/removable/SD Card/frontiers_data/'
+result_dir =    '/media/removable/SD Card/frontiers_data/results'
+data_dir =      '/media/removable/SD Card/frontiers_data/data/'
+base_url =      'http://journal.frontiersin.org/article/10.3389/fpsyg.'
 
 import util 
 from collections import defaultdict, Counter
@@ -73,6 +71,142 @@ def createArticle (article):
     if length == 4:             return '0' + str(article)
     if length == 5:             return str(article)
 
+##############################################################################
+#
+#   saveCounter, saveDictionary, loadCounter, loadDictionary, 
+#       mergeCounters, and mergeDictionaries
+#
+# First four methods deal with data retrieval and storage on the disk. 
+# The merge methods are for taking already made dictionaries, loading 
+# them in memory into a larger dictionary, then storing them back on 
+# the disk.  Those can also be access from the save/load methods. 
+#
+##############################################################################
+
+def saveCounter (counter, fileName, saveDir):
+    c = os.path.join(data_dir, saveDir, fileName + '_c.csv')
+    w = csv.writer(open(c , 'w'))
+    for key, value in counter.iteritems(): 
+        w.writerow([key, value])
+    print 'Saved file "' + fileName + '_c.csv" in' + data_dir + saveDir
+
+def saveDictionary (dictionary, fileName, saveDir): 
+    d = os.path.join(data_dir, saveDir, fileName + '_d.csv')
+    w = csv.writer(open(d , 'w'))
+    for key, value in dictionary.iteritems(): 
+        w.writerow([key, value])
+    print 'Saved file "' + fileName + '_d.csv" in' + data_dir + saveDir
+
+def saveSet (output, fileName):
+    d = os.path.join(result_dir, fileName + '.csv')
+    w = csv.writer(open(d , 'w'))
+    for file in output:
+        w.writerow([file])
+    print 'Saved file "' + fileName + '.csv" in' + result_dir
+
+def loadCounter (fileName, saveDir): 
+    if '_c.csv' in fileName: 
+        d = os.path.join(data_dir, saveDir, fileName)
+    else:   
+        d = os.path.join(data_dir, saveDir, fileName + '_c.csv')
+    counter = Counter()
+    for key, value in csv.reader(open(d)):
+        counter[key.decode('utf8')] = int(value)
+
+    return counter
+
+def loadDictionary (fileName, saveDir):
+    if '_d.csv' in fileName: 
+        d = os.path.join(data_dir, saveDir, fileName)
+    else:   
+        d = os.path.join(data_dir, saveDir, fileName + '_d.csv')
+    dictionary = defaultdict(list)
+    for key, values in csv.reader(open(d)):
+        for value in re.sub("[^.0-9a-z_ ]", "", values).split():
+            dictionary[key].append(value)
+
+    return dictionary
+
+def loadSet (fileName): 
+    d = os.path.join(result_dir, fileName + '.csv')
+    output = set()
+    for line in csv.reader(open(d)):
+        output.add(line[0])
+
+    return output
+
+def mergeCounters (key, saveDir): 
+    # key can either be 'articles' or 'keywords'
+    d = os.path.join(data_dir, saveDir)
+    counter = Counter()
+    for file in os.listdir(d):
+        if key in file: 
+            if '_d' in file or 'merged' in file: 
+                continue
+            else: 
+                counter += loadCounter(file, saveDir)
+
+    saveCounter(counter, 'merged_' + key, saveDir)
+
+def mergeDictionaries (key, saveDir): 
+    # key can either be 'articles' or 'keywords'
+    d = os.path.join(data_dir, saveDir)
+    dictionary = defaultdict(list)
+    for file in os.listdir(d):
+        if key in file: 
+            if '_c' in file or 'merged' in file: 
+                continue
+            else:
+                addDict = loadDictionary(file, saveDir)
+                for word, file_list in addDict.iteritems():
+                    for file in file_list:
+                        dictionary[word].append(file)
+
+    saveDictionary(dictionary, 'merged_' + key, saveDir)
+
+def merge (key, saveDir = None): 
+    if key == 'keywords': 
+        saveDir = 'kwd_data'
+    if key == 'types': 
+        saveDir = 'type_data'
+    mergeCounters(key, saveDir)
+    mergeDictionaries(key, saveDir)
+
+##############################################################################
+#
+#   getFileSize, getFileCount, and getTotalFileSize
+#
+# All three methods deal with grabbing information about files in the 
+# project directory. getFileCount only cares about '.xml' files, as it 
+# is used for the progress bar for the find methods below. 
+#
+##############################################################################
+
+def getFileCount ():
+    total = 0
+    for path, dirs, files in os.walk(root_dir):
+        for file in files:
+            if '.xml' not in file:
+                continue
+            else:
+                total += 1
+
+    return total
+
+def getTotalFileSize (): 
+    total = 0.0
+    for path, dirs, files in os.walk(root_dir):
+        for file in files:
+            file_name = os.path.join(path, file)
+            total += os.path.getsize(file_name)
+
+    return float(total / 1000000)
+
+def getFileSize (xml):
+    h = requests.head(xml)
+    file_size = h.headers['content-length']
+    return file_size
+
 ###############################################################################
 #
 #   and getTitlesFromKeys
@@ -97,7 +231,7 @@ def getKeysGreaterThan (key, saveDir, x = None):
     if flag > 0: 
         mergeCounters(key)
 
-    c = osInterface.loadCounter('merged_' + key, saveDir)
+    c = loadCounter('merged_' + key, saveDir)
     cnt = Counter()
     for title, count in c.iteritems(): 
         if count > x: 
@@ -107,13 +241,13 @@ def getKeysGreaterThan (key, saveDir, x = None):
 
 def getTitlesFromKeys (key, saveDir, x = None): 
     counter = getKeysGreaterThan(key, saveDir, x)
-    dictionary = osInterface.loadDictionary('merged_' + key, saveDir)
+    dictionary = loadDictionary('merged_' + key, saveDir)
     titles = set()
     for title, count in counter.iteritems(): 
         for title in dictionary[title]:
             titles.add(title)
 
-    osInterface.saveSet (titles, 'titleSetFrom' + str(x) + key)
+    saveSet (titles, 'titleSetFrom' + str(x) + key)
 
     return str(len(titles))
 
@@ -136,7 +270,7 @@ def printKeysGreaterThan (key, x = None):
         x = 0
 
     d = getKeysGreaterThan(key, saveDir, x)
-    f = osInterface.getFileCount()
+    f = getFileCount()
     t = getTitlesFromKeys(key, saveDir, x)
     dL = len(d)
 
@@ -190,8 +324,8 @@ def writeData (year):
     name = 0
     nullURL = 0
 
-    file_total = osInterface.getFileCount()
-    file_size = osInterface.getTotalFileSize()
+    file_total = getFileCount()
+    file_size = getTotalFileSize()
     print   'Current usage in project directory: ' + \
             str(round(file_size, 2)) + \
             ' bytes in ' + str(file_total) + ' files' 
@@ -221,8 +355,8 @@ def writeData (year):
                 sys.stdout.flush()
 
     print '\n'
-    newFile_size = osInterface.getTotalFileSize() - file_size
-    newFile_total = osInterface.getFileCount() - file_total
+    newFile_size = getTotalFileSize() - file_size
+    newFile_total = getFileCount() - file_total
     print 'Added to project directory: ' + str(round(newFile_size, 2)) + \
             ' bytes in ' + str(newFile_total) + ' files'
 
@@ -263,8 +397,8 @@ def findKeyWords (year):
         i += 1
         util.printInfo(i, l)
 
-    osInterface.saveCounter(counter, year + '_keywords', 'kwd_data')
-    osInterface.saveDictionary(dictionary, year + '_keywords', 'kwd_data')
+    saveCounter(counter, year + '_keywords', 'kwd_data')
+    saveDictionary(dictionary, year + '_keywords', 'kwd_data')
 
 def findTypes (year): 
     counter = Counter()
@@ -285,8 +419,8 @@ def findTypes (year):
         i += 1
         util.printInfo(i, l)
 
-    osInterface.saveCounter(counter, year + '_types', 'type_data')
-    osInterface.saveDictionary(dictionary, year + '_types', 'type_data')
+    saveCounter(counter, year + '_types', 'type_data')
+    saveDictionary(dictionary, year + '_types', 'type_data')
 
 def findAll (key):
     start_time = time.time()
