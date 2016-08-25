@@ -1,15 +1,10 @@
+# Provides a progress bar within the terminal. Progress_Bar needs to be 
+# initialized with the total iterations. After each step, call function. 
+# This was adapted from Vladimir Ignatyev's code found on stackoverflow
 
+# import time to display elapsed time
 import time 
 import sys
-
-##############################################################################
-#
-# Provides a nice progress bar within the terminal. printInfo is a 
-# helper method that shortens the declaration in the methods above 
-# (prefix/suffix/barLength never change).
-#   NOTE: adapted from Vladimir Ignatyev's code found on stackoverflow
-#
-##############################################################################
 
 class Time (object):
     def __init__ (self): 
@@ -18,7 +13,7 @@ class Time (object):
     def display_elapsed_time (self):
         elapsed_time = time.time() - self.start_time
         m, s = divmod(elapsed_time, float(60))
-        print "-----> elapsed time: %.0f m, %.2f s" % (m, round(s, 2))
+        print "elapsed time: %.0f m, %.2f s" % (m, round(s, 2))
 
 class Progress_Bar (object): 
     def __init__ (self, total):
