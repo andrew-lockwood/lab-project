@@ -9,9 +9,9 @@
 #######################################################################
 
 frequency_load_path = \
-'/media/removable/SD Card/frontiers_data/corpus/parsed_frequency_counts.csv'
+'/media/removable/SD Card/frontiers_data/models/word2vec_scores/epochtraining_frequencies.csv'
 jaccard_load_path = \
-'/media/removable/SD Card/frontiers_data/models/every_score50and300N25.csv'
+'/media/removable/SD Card/frontiers_data/models/word2vec_scores/epochtraining_scores_n15.csv'
 
 #######################################################################
 #
@@ -172,14 +172,15 @@ class BinnedFrequencyData (object):
 
 # If bin_num <= n, every bin will be represented.
 # For n < bin_num, only the largest n bins will be represented.
-def display_boxplot (bin_num = 30, n = 40): 
+def display_boxplot (bin_num = 200, n = 50): 
     """Prints a boxplot in a seperate window and the bin summary in the terminal."""
     fd = BinnedFrequencyData(bin_num = bin_num)
     fd.display_bin_summary(n)
-    P.boxplot(fd.graph_data(n), notch = False, showmeans = True, showfliers = False)
-    P.title('50 by 300 features with 25 similar words')
-    P.ylabel('Jaccard Distance')
+    P.boxplot(fd.graph_data(n), notch = False, showmeans = True, showfliers = True)
+    P.title('EPOCH TRAINING: 50 by 300 features with 15 similar words')
+    P.ylabel('Jaccard Index')
     P.xlabel('bins')
+    P.ylim([0, 1])
     P.show()
 
 
