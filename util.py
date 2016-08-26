@@ -15,7 +15,7 @@ class Time (object):
         m, s = divmod(elapsed_time, float(60))
         print "elapsed time: %.0f m, %.2f s" % (m, round(s, 2))
 
-class Progress_Bar (object): 
+class ProgressBar (object): 
     def __init__ (self, total):
         self.total = total
         self.iteration = 0
