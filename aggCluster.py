@@ -21,7 +21,9 @@ from sklearn.neighbors import NearestCentroid
 import matplotlib.pyplot as P
 import numpy as np
 
+cluster_dir = '/home/andrew/cluster_data'
 model_dir = '/media/removable/SD Card/frontiers_data/models/doc2vec/'
+kwd_dir =   '/media/removable/SD Card/frontiers_data/data/kwd_data'
  
 """
 Information about the algorithms pulled from sklearn
@@ -78,20 +80,52 @@ class tTransform (object):
                 f.write(str(v) + " ")
             f.write('\n')
 
-    def load_n_cluster (self, n, fname = 'cluster.txt'): 
+    def load_n_cluster (self, n, fname = 'clusters2.txt'): 
+        path = os.path.join('/home/andrew/cluster_data', fname)
         self.cluster_ids = []
         print 'loading the %s cluster' % n
-        with open(fname) as f:
+        with open(path) as f:
             for i in xrange(n): f.next()
             for line in f:
                 for c_id in line.split():
                     self.cluster_ids.append(int(c_id))
                 break        
 
-    @time_this
-    def cluster_results (self, n, write): 
-        load_path = '/media/removable/SD Card/frontiers_data/data/kwd_data/title_to_kwd.csv'
+    def getkwds (self, n, fname = 'kwd_counter.csv'):
+        """Loads a list of keywords greater than n."""
+        kwds = []
+        path = os.path.join(kwd_dir, fname)
 
+        with open(path) as f: 
+            r = csv.reader(f)
+            for kwd, count in r: 
+                if kwd == 'NULL':   # Skip the null keyword
+                    continue
+                elif int(count) > n: 
+                    kwds.append(kwd)
+
+        return kwds
+
+    def loadkwddict (self, n, fname = 'kwd_to_title.csv'):
+        """Creates a title dictionary given a set of keywords."""
+        path = os.path.join(kwd_dir, fname)
+        kwds = self.getkwds(n)
+        d = defaultdict(set)
+
+        with open(path) as f:
+            r = csv.reader(f)
+            for kwd, titles in r:
+                if kwd in kwds:
+                    for title in re.findall(r"'(.*?)'", titles, re.DOTALL):
+                        d[kwd].add(title)
+
+        return d
+
+    @time_this
+    def cluster_results (self, n, write, results = 'complete_results.txt'): 
+        load_path = '/media/removable/SD Card/frontiers_data/data/kwd_data/title_to_kwd.csv'
+        if self.vectors == None: 
+            self.load_vectors()
         self.load_n_cluster(n)
 
         # STEP 1: Create a dictionary, mapping titles to each cluster 
@@ -132,15 +166,22 @@ class tTransform (object):
 
         self.kwd_totals = kwd_totals  # Has the kwd count for each cluster
 
+
+        kwds = self.getkwds(80)
+
         if write == True: 
             # STEP 4: Write the counter to results.txt
             print 'writing results'
-            with open('results_nokwd.txt', 'w') as f: 
+            with open(results, 'w') as f: 
                 for counter in counter_list: 
                     for key, value in counter.most_common(): 
-                        if value > 3: 
+                        if key in kwds:
                             f.write(key + ': ' + str(value) + ', ')
                     f.write('\n')
+
+    def scorekwds (self, n, numclusters, fname): 
+        cluster_results(20, True, 'firsttest.txt')
+
 
     def cluster_keyword_information (self, n, orderby = 'id'): 
 
@@ -235,12 +276,16 @@ n_clusters = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, \
 15, 16, 17, 18, 19, 20, 40, 60, 80, 100, 500]
 # add 30, 10, 70, 90 
 
+
+
 x = tTransform()
+x.cluster_results(20, True, 'test.txt')
+#x.loadkwddict(100)
 #x.load_vectors()
 
-for n, i in enumerate(n_clusters): 
-    x.load_n_cluster(n, fname = 'clusters2.txt')
-    x.create_cluster_counter(fname = 'clusterCounter2.txt')
+#for n, i in enumerate(n_clusters): 
+#    x.load_n_cluster(n, fname = 'clusters2.txt')
+#    x.create_cluster_counter(fname = 'clusterCounter2.txt')
 """
 for n in n_clusters:
     before = datetime.datetime.now()                     
