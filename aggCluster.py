@@ -106,6 +106,21 @@ class tTransform (object):
 
         return kwds
 
+    def getkwdcounts (self, n, fname = 'kwd_counter.csv'):
+        """Loads a list of keywords greater than n."""
+        kwds = {}
+        path = os.path.join(kwd_dir, fname)
+
+        with open(path) as f: 
+            r = csv.reader(f)
+            for kwd, count in r: 
+                if kwd == 'NULL':   # Skip the null keyword
+                    continue
+                elif int(count) > n: 
+                    kwds[kwd] = int(count)
+
+        return kwds  
+
     def loadkwddict (self, n, fname = 'kwd_to_title.csv'):
         """Creates a title dictionary given a set of keywords."""
         path = os.path.join(kwd_dir, fname)
@@ -122,7 +137,7 @@ class tTransform (object):
         return d
 
     @time_this
-    def cluster_results (self, n, write, results = 'complete_results.txt'): 
+    def cluster_results (self, n, write = False, score = True, results = 'complete_results.txt'): 
         load_path = '/media/removable/SD Card/frontiers_data/data/kwd_data/title_to_kwd.csv'
         if self.vectors == None: 
             self.load_vectors()
@@ -166,8 +181,21 @@ class tTransform (object):
 
         self.kwd_totals = kwd_totals  # Has the kwd count for each cluster
 
+        if score == True: 
+            print 'scoring kwds'
+            totals = self.getkwdcounts(80)
+            kwds = self.getkwds(80)
+            c = Counter()
+            for n, counter in enumerate(counter_list): 
+                for key, value in counter.most_common():
+                    if key in kwds: 
+                        c[key] = value/float(totals[key])
 
-        kwds = self.getkwds(80)
+            with open(results, 'a') as f: 
+                #f.write(str(len(counter_list)) + " clusters: \n")
+                for key, value in c.most_common(10):
+                    f.write(key + ': %.3f, ' % value)
+                f.write('\n')
 
         if write == True: 
             # STEP 4: Write the counter to results.txt
@@ -176,12 +204,8 @@ class tTransform (object):
                 for counter in counter_list: 
                     for key, value in counter.most_common(): 
                         if key in kwds:
-                            f.write(key + ': ' + str(value) + ', ')
+                            f.write(key + ':' + str(value) + ',')
                     f.write('\n')
-
-    def scorekwds (self, n, numclusters, fname): 
-        cluster_results(20, True, 'firsttest.txt')
-
 
     def cluster_keyword_information (self, n, orderby = 'id'): 
 
@@ -279,7 +303,9 @@ n_clusters = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, \
 
 
 x = tTransform()
-x.cluster_results(20, True, 'test.txt')
+for i in xrange(len(n_clusters)):
+    x.cluster_results(n = i, results = 'test2.txt')
+
 #x.loadkwddict(100)
 #x.load_vectors()
 

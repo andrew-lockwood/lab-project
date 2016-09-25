@@ -1,40 +1,50 @@
-attention: 14, memory: 7, consciousness: 5, schizophrenia: 4, cognition: 3, working memory: 3, children: 2, depression: 2, aging: 2, individual differences: 2, emotion: 2, fmri: 2, social cognition: 2, bilingualism: 1, perception: 1, development: 1, cognitive control: 1, 
-social cognition: 24, development: 20, speech perception: 12, children: 10, memory: 10, language: 8, attention: 8, working memory: 8, bilingualism: 7, emotion: 6, individual differences: 5, perception: 5, embodied cognition: 5, music: 3, cognitive control: 3, cognition: 2, schizophrenia: 2, aging: 1, fmri: 1, 
-emotion: 48, fmri: 13, attention: 11, depression: 8, aging: 7, working memory: 7, memory: 6, individual differences: 6, cognitive control: 5, cognition: 4, language: 4, children: 3, music: 3, perception: 3, embodied cognition: 3, schizophrenia: 2, development: 2, 
-emotion: 38, aging: 14, attention: 13, social cognition: 11, memory: 10, development: 7, fmri: 7, schizophrenia: 6, children: 5, individual differences: 5, perception: 5, depression: 3, speech perception: 3, music: 1, language: 1, working memory: 1, 
-memory: 18, working memory: 17, aging: 13, children: 6, attention: 6, development: 5, cognition: 4, individual differences: 3, perception: 3, fmri: 3, cognitive control: 3, depression: 2, consciousness: 2, music: 1, social cognition: 1, language: 1, emotion: 1, 
-speech perception: 40, working memory: 23, cognition: 11, aging: 9, attention: 9, children: 8, perception: 8, bilingualism: 6, memory: 6, development: 3, music: 1, individual differences: 1, language: 1, emotion: 1, 
-individual differences: 11, depression: 11, emotion: 10, music: 6, working memory: 5, development: 5, social cognition: 5, bilingualism: 4, aging: 3, language: 3, children: 3, embodied cognition: 2, cognition: 2, schizophrenia: 2, attention: 2, consciousness: 1, cognitive control: 1, memory: 1, fmri: 1, 
-consciousness: 2, aging: 1, perception: 1, memory: 1, 
-working memory: 15, bilingualism: 8, individual differences: 7, language: 4, fmri: 4, emotion: 3, attention: 3, children: 2, memory: 2, embodied cognition: 2, speech perception: 1, social cognition: 1, perception: 1, schizophrenia: 1, cognition: 1, 
-consciousness: 87, emotion: 52, cognition: 31, attention: 29, music: 27, language: 18, depression: 17, memory: 16, embodied cognition: 14, schizophrenia: 14, perception: 13, fmri: 11, cognitive control: 9, development: 9, social cognition: 9, individual differences: 8, working memory: 5, speech perception: 4, bilingualism: 3, aging: 3, children: 3, 
-bilingualism: 47, attention: 10, language: 7, children: 6, working memory: 6, individual differences: 6, aging: 5, speech perception: 4, cognition: 4, cognitive control: 4, memory: 3, emotion: 2, fmri: 1, embodied cognition: 1, 
-schizophrenia: 21, consciousness: 21, perception: 13, fmri: 9, attention: 9, aging: 6, working memory: 5, development: 4, emotion: 3, cognition: 2, social cognition: 2, individual differences: 2, bilingualism: 1, cognitive control: 1, speech perception: 1, embodied cognition: 1, 
-individual differences: 15, development: 4, cognition: 3, working memory: 3, depression: 2, memory: 2, children: 1, music: 1, aging: 1, social cognition: 1, schizophrenia: 1, consciousness: 1, embodied cognition: 1, cognitive control: 1, 
-working memory: 19, attention: 11, cognition: 7, cognitive control: 6, children: 5, individual differences: 2, language: 2, music: 1, memory: 1, aging: 1, schizophrenia: 1, development: 1, 
-embodied cognition: 30, language: 7, perception: 5, emotion: 5, memory: 3, social cognition: 3, cognition: 3, bilingualism: 2, fmri: 2, speech perception: 1, aging: 1, attention: 1, working memory: 1, 
-attention: 11, perception: 9, embodied cognition: 8, cognition: 5, fmri: 5, language: 4, development: 4, children: 3, schizophrenia: 3, aging: 2, social cognition: 2, consciousness: 2, working memory: 2, emotion: 1, speech perception: 1, memory: 1, music: 1, 
-attention: 6, cognition: 5, music: 3, individual differences: 3, children: 2, perception: 2, development: 2, depression: 1, aging: 1, emotion: 1, fmri: 1, social cognition: 1, consciousness: 1, embodied cognition: 1, memory: 1, 
-emotion: 9, children: 5, social cognition: 5, development: 4, aging: 3, depression: 1, cognition: 1, individual differences: 1, schizophrenia: 1, 
-embodied cognition: 10, development: 8, children: 6, language: 4, attention: 4, working memory: 4, bilingualism: 3, individual differences: 3, fmri: 3, aging: 1, cognition: 1, perception: 1, emotion: 1, memory: 1, schizophrenia: 1, cognitive control: 1, 
-depression: 39, schizophrenia: 25, fmri: 11, memory: 9, cognition: 8, children: 8, music: 7, emotion: 7, aging: 6, social cognition: 6, attention: 5, working memory: 4, individual differences: 4, development: 3, embodied cognition: 2, 
-consciousness: 2, embodied cognition: 2, perception: 2, memory: 2, cognition: 1, individual differences: 1, attention: 1, language: 1, emotion: 1, music: 1, 
-emotion: 4, embodied cognition: 2, attention: 2, social cognition: 1, cognition: 1, perception: 1, fmri: 1, music: 1, 
-music: 43, language: 12, attention: 7, fmri: 6, development: 6, working memory: 6, speech perception: 5, children: 4, individual differences: 4, perception: 4, emotion: 4, memory: 3, cognition: 3, consciousness: 2, embodied cognition: 2, 
-consciousness: 2, perception: 2, attention: 2, emotion: 2, working memory: 2, cognitive control: 2, language: 1, 
-attention: 9, consciousness: 5, schizophrenia: 4, emotion: 3, speech perception: 2, music: 2, working memory: 2, children: 1, depression: 1, memory: 1, cognition: 1, perception: 1, fmri: 1, 
-emotion: 3, social cognition: 2, working memory: 2, language: 2, bilingualism: 1, cognition: 1, depression: 1, attention: 1, aging: 1, 
-
-schizophrenia: 1, 
-cognitive control: 41, attention: 38, aging: 13, working memory: 11, individual differences: 6, social cognition: 6, emotion: 5, perception: 4, memory: 3, development: 3, cognition: 2, fmri: 2, consciousness: 2, children: 1, 
-emotion: 1, memory: 1, attention: 1, cognitive control: 1, 
-emotion: 1, social cognition: 1, consciousness: 1, children: 1, memory: 1, depression: 1, 
-children: 2, cognition: 2, development: 2, individual differences: 2, memory: 1, aging: 1, 
-fmri: 42, language: 20, speech perception: 10, memory: 9, attention: 8, music: 8, perception: 7, working memory: 7, schizophrenia: 4, consciousness: 4, children: 3, aging: 3, individual differences: 3, cognitive control: 3, bilingualism: 1, cognition: 1, development: 1, 
-social cognition: 2, embodied cognition: 2, consciousness: 1, attention: 1, language: 1, memory: 1, music: 1, 
-attention: 7, memory: 2, children: 1, cognitive control: 1, 
-depression: 3, individual differences: 3, perception: 2, fmri: 2, children: 1, attention: 1, emotion: 1, 
-emotion: 5, perception: 3, cognition: 2, music: 2, aging: 2, consciousness: 1, children: 1, attention: 1, fmri: 1, development: 1, 
-attention: 5, perception: 4, cognition: 2, fmri: 2, memory: 2, 
-children: 4, attention: 3, cognition: 2, memory: 2, development: 1, depression: 1, aging: 1, 
-cognition: 4, individual differences: 4, fmri: 3, emotion: 3, working memory: 3, depression: 2, perception: 2, consciousness: 2, children: 1, music: 1, attention: 1, aging: 1, memory: 1, language: 1, development: 1, cognitive control: 1, 
+1 clusters: 
+0schizophrenia: 1.000, 0memory: 1.000, 0music: 1.000, 0aging: 1.000, 0embodied cognition: 1.000, 0perception: 1.000, 0individual differences: 1.000, 0social cognition: 1.000, 0consciousness: 1.000, 0language: 1.000, 
+2 clusters: 
+0speech perception: 0.952, 0bilingualism: 0.893, 0working memory: 0.832, 0perception: 0.814, 0cognitive control: 0.812, 0aging: 0.794, 1depression: 0.789, 0fmri: 0.785, 0embodied cognition: 0.784, 0attention: 0.775, 
+3 clusters: 
+0speech perception: 0.952, 0bilingualism: 0.893, 0working memory: 0.832, 0cognitive control: 0.812, 0perception: 0.794, 1depression: 0.789, 0aging: 0.784, 0embodied cognition: 0.784, 0fmri: 0.770, 0attention: 0.758, 
+4 clusters: 
+0speech perception: 0.881, 0bilingualism: 0.881, 1depression: 0.789, 0embodied cognition: 0.716, 1consciousness: 0.694, 0language: 0.686, 3cognitive control: 0.600, 0working memory: 0.565, 0music: 0.544, 3aging: 0.539, 
+5 clusters: 
+0depression: 0.789, 4bilingualism: 0.738, 4speech perception: 0.714, 0consciousness: 0.694, 1embodied cognition: 0.659, 3cognitive control: 0.600, 3aging: 0.539, 0schizophrenia: 0.516, 3emotion: 0.462, 4music: 0.456, 
+6 clusters: 
+2depression: 0.758, 4bilingualism: 0.738, 4speech perception: 0.714, 0embodied cognition: 0.659, 2consciousness: 0.653, 1cognitive control: 0.600, 1aging: 0.539, 2schizophrenia: 0.505, 1emotion: 0.462, 4music: 0.456, 
+7 clusters: 
+6depression: 0.758, 4bilingualism: 0.738, 4speech perception: 0.714, 6consciousness: 0.653, 0cognitive control: 0.600, 0aging: 0.539, 6schizophrenia: 0.505, 2embodied cognition: 0.489, 0emotion: 0.462, 4music: 0.456, 
+8 clusters: 
+6depression: 0.758, 1bilingualism: 0.738, 1speech perception: 0.714, 6consciousness: 0.653, 7cognitive control: 0.541, 6schizophrenia: 0.505, 2embodied cognition: 0.489, 1music: 0.456, 1language: 0.431, 4emotion: 0.409, 
+9 clusters: 
+6depression: 0.758, 0bilingualism: 0.738, 0speech perception: 0.714, 6consciousness: 0.653, 3cognitive control: 0.541, 6schizophrenia: 0.505, 2embodied cognition: 0.489, 0music: 0.456, 0language: 0.431, 4emotion: 0.409, 
+10 clusters: 
+6depression: 0.758, 9speech perception: 0.655, 4bilingualism: 0.655, 6consciousness: 0.653, 3cognitive control: 0.541, 6schizophrenia: 0.505, 2embodied cognition: 0.489, 9music: 0.456, 1emotion: 0.409, 6cognition: 0.403, 
+11 clusters: 
+2depression: 0.758, 9speech perception: 0.655, 4bilingualism: 0.655, 2consciousness: 0.653, 3cognitive control: 0.541, 2schizophrenia: 0.505, 0embodied cognition: 0.489, 9music: 0.456, 1emotion: 0.409, 2cognition: 0.403, 
+12 clusters: 
+2depression: 0.758, 9speech perception: 0.655, 4bilingualism: 0.655, 2consciousness: 0.653, 1cognitive control: 0.541, 2schizophrenia: 0.505, 9music: 0.456, 11embodied cognition: 0.432, 0emotion: 0.409, 2cognition: 0.403, 
+13 clusters: 
+0depression: 0.758, 9speech perception: 0.655, 4bilingualism: 0.655, 0consciousness: 0.653, 1cognitive control: 0.541, 0schizophrenia: 0.505, 9music: 0.456, 5embodied cognition: 0.432, 0cognition: 0.403, 0individual differences: 0.383, 
+14 clusters: 
+0depression: 0.726, 9speech perception: 0.655, 4bilingualism: 0.655, 0consciousness: 0.646, 1cognitive control: 0.541, 0schizophrenia: 0.484, 9music: 0.456, 5embodied cognition: 0.432, 11emotion: 0.382, 0cognition: 0.370, 
+15 clusters: 
+9speech perception: 0.655, 4bilingualism: 0.655, 3consciousness: 0.639, 0cognitive control: 0.541, 14depression: 0.526, 9music: 0.456, 5embodied cognition: 0.432, 11emotion: 0.382, 9fmri: 0.356, 9language: 0.324, 
+16 clusters: 
+9speech perception: 0.655, 4bilingualism: 0.655, 1consciousness: 0.639, 14depression: 0.526, 15cognitive control: 0.518, 9music: 0.456, 5embodied cognition: 0.432, 11emotion: 0.382, 9fmri: 0.356, 9language: 0.324, 
+17 clusters: 
+9speech perception: 0.655, 4bilingualism: 0.655, 1consciousness: 0.639, 14depression: 0.526, 15cognitive control: 0.518, 9music: 0.456, 5embodied cognition: 0.432, 11emotion: 0.382, 9fmri: 0.356, 9language: 0.324, 
+18 clusters: 
+9speech perception: 0.655, 4bilingualism: 0.655, 1consciousness: 0.639, 14depression: 0.526, 15cognitive control: 0.518, 9music: 0.456, 2embodied cognition: 0.432, 5emotion: 0.382, 9fmri: 0.356, 9language: 0.324, 
+19 clusters: 
+9speech perception: 0.655, 4bilingualism: 0.655, 1consciousness: 0.639, 14depression: 0.526, 15cognitive control: 0.518, 9music: 0.456, 0embodied cognition: 0.432, 5emotion: 0.382, 9fmri: 0.356, 9language: 0.324, 
+20 clusters: 
+1bilingualism: 0.655, 4speech perception: 0.655, 0consciousness: 0.639, 14depression: 0.526, 15cognitive control: 0.518, 4music: 0.456, 5emotion: 0.382, 4fmri: 0.356, 9embodied cognition: 0.341, 4language: 0.324, 
+40 clusters: 
+9consciousness: 0.604, 10bilingualism: 0.560, 28cognitive control: 0.482, 5speech perception: 0.476, 19depression: 0.411, 22music: 0.377, 14embodied cognition: 0.341, 32fmri: 0.311, 1social cognition: 0.282, 19schizophrenia: 0.269, 
+60 clusters: 
+7consciousness: 0.514, 49bilingualism: 0.488, 13cognitive control: 0.482, 15speech perception: 0.464, 34depression: 0.389, 4music: 0.377, 6embodied cognition: 0.341, 32fmri: 0.311, 34schizophrenia: 0.269, 11schizophrenia: 0.226, 
+80 clusters: 
+9consciousness: 0.514, 49bilingualism: 0.488, 18cognitive control: 0.459, 16depression: 0.389, 7fmri: 0.311, 63music: 0.289, 16schizophrenia: 0.269, 74speech perception: 0.238, 71embodied cognition: 0.227, 62speech perception: 0.226, 
+100 clusters: 
+4consciousness: 0.507, 99bilingualism: 0.488, 8cognitive control: 0.459, 20depression: 0.316, 35fmri: 0.296, 31music: 0.289, 74speech perception: 0.238, 71embodied cognition: 0.227, 30speech perception: 0.226, 32emotion: 0.196, 
+500 clusters: 
+182bilingualism: 0.417, 35consciousness: 0.389, 211cognitive control: 0.224, 28fmri: 0.200, 92music: 0.184, 47depression: 0.168, 91music: 0.149, 18cognitive control: 0.129, 195schizophrenia: 0.129, 360embodied cognition: 0.125, 
