@@ -1,36 +1,30 @@
-# Directories that need to be set before using.  Models is where the 
-# created models will be stored and article is where every article
-# resides as a .txt file.  
-models_dir =    '/media/removable/SD Card/frontiers_data/models/doc2vec'
+#### Directories that need to be set before using ####  
+# Models: where models will be stored 
+# Scores: where model scores will be stored 
+# Articles: where every model as a .txt file is store (does not have to be processed)
+models_dir =    '/media/removable/SD Card/frontiers_data/models/doc2vec/'
+score_dir =     '/media/removable/SD Card/frontiers_data/models/word2vec_scores/'
 article_dir =   '/media/removable/SD Card/frontiers_data/article_txt/'
 
 # De-comment to set up gensims native logging. Extremely useful when 
-# training models, not so much for querying. 
-import logging
-logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+# training models to visualize progress
+#import logging
+#logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', \
+#level=logging.INFO)
 
-# Only gensim needs to be installed for this to work.  The other four
-# imports are native to python.  
+# Imported packages. Make sure gensim is installed.   
 import gensim.models  
 
 from util import ProgressBar
+from util import time_this
+
 from random import shuffle
-import multiprocessing
 import re 
 import os
 
+# Set the number of cores 
+import multiprocessing
 cores = multiprocessing.cpu_count()
-
-# Decorator for displaying elapsed time of a function
-def time_this(original_function):      
-    def new_function(*args,**kwargs):
-        import datetime                 
-        before = datetime.datetime.now()                     
-        x = original_function(*args,**kwargs)                
-        after = datetime.datetime.now()                      
-        print "Elapsed Time = {0}".format(after-before)      
-        return x                                             
-    return new_function
 
 class SentenceLabels (object):
     def __init__ (self, article_dir = article_dir, label_lines = False):
@@ -41,18 +35,9 @@ class SentenceLabels (object):
             self.file_dirs.append(os.path.join(article_dir, file))
         shuffle(self.file_dirs)	
 
-    def num_articles (self): 
+    def __len__ (self): 
         """Returns the number of files looked at."""
         return len(self.file_dirs)
-
-    def num_lines (self): 
-        """Returns the number of lines in the file."""
-        num_lines = 0
-        for file_dir in self.file_dirs:
-            with open(file_dir) as file: 
-                for line in file.readlines():
-                    num_articles += 1
-        return num_lines
 
     def __iter__ (self):
         """Iterates through each line in each file."""
@@ -66,13 +51,21 @@ class SentenceLabels (object):
                         label = label + '_' + str(line)
                     yield gensim.models.doc2vec.LabeledSentence(words = parsed_line, tags = [label])
 
+    def num_lines (self): 
+        """Returns the number of lines in the file."""
+        num_lines = 0
+        for file_dir in self.file_dirs:
+            with open(file_dir) as file: 
+                for line in file.readlines():
+                    num_articles += 1
+        return num_lines
+
 class Doc2VecModel (object):    
     def __init__ (self, model_name, models_dir = models_dir):
         self.model_path = os.path.join(models_dir, model_name)
         self.model_name = model_name
         self.model = None
 
-    @time_this
     def create_model (self, label_lines = False, size = 300):
         """Creates a model and builds vocab via a SentenceLabels object."""
         self.model = gensim.models.doc2vec.Doc2Vec(\

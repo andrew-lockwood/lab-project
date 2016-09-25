@@ -1,44 +1,32 @@
-# Slimmed down version of previous iterations of this file. Has a few less
-# checks, but because it clearer and more concise, it shouldn't be an issue.
-
-# Directories that need to be set before using.  Models is where the 
-# created models will be stored, score is where scores and frequencies
-# will be stored, and article is where every article resides as a .txt file.  
+#### Directories that need to be set before using ####  
+# Models: where models will be stored 
+# Scores: where model scores will be stored 
+# Articles: where every model as a .txt file is store (does not have to be processed)
 models_dir =    '/media/removable/SD Card/frontiers_data/models/word2vec/'
 score_dir =     '/media/removable/SD Card/frontiers_data/models/word2vec_scores/'
 article_dir =   '/media/removable/SD Card/frontiers_data/article_txt/'
 
 # De-comment to set up gensims native logging. Extremely useful when 
-# training models, not so much for querying. 
+# training models to visualize progress
 #import logging
-#logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+#logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', \
+#level=logging.INFO)
 
-# Only gensim needs to be installed for this to work. Util can be 
-# decommented. The only thing it controls is a progress bar on the 
-# command line. The other five imports are native to python.  
+# Imported packages. Make sure gensim is installed.   
 import gensim.models  
 
 from util import ProgressBar
+from util import time_this
 
 from collections import Counter
 from random import shuffle
-import multiprocessing
 import csv
 import re 
 import os
 
+# Set the number of cores 
+import multiprocessing
 cores = multiprocessing.cpu_count()
-
-def time_this(original_function):    
-    """Decorator used to quickly time a function."""  
-    def new_function(*args,**kwargs):
-        import datetime                 
-        before = datetime.datetime.now()                     
-        x = original_function(*args,**kwargs)                
-        after = datetime.datetime.now()                      
-        print "Elapsed Time = {0}".format(after-before)      
-        return x                                             
-    return new_function
 
 # Iterates randomly through through all the articles, preserving the
 # order within the article themselves. Parses text on the fly. This 
@@ -125,23 +113,6 @@ class Word2VecModel (object):
     def num_features (self):
         """Returns the number of features in a given model."""
         return self.model.syn0.shape[1]
-
-# Only needs to be ran once for creating a histogram of the data later on 
-# Make sure the load path is correct at the top of binnedHistogram when used
-class FrequencyDict (object): 
-    def __init__ (self, score_dir = score_dir):
-        """Creates and saves a frequency dictionary from Sentences().""" 
-        sentences = Sentences()
-
-        word_count = Counter()
-        for sentence in sentences: 
-            for word in sentence: 
-                word_count[word] += 1
-
-        save_path = os.path.join(score_dir, save)
-        frequency_file = csv.writer(open(save_path, 'w')) 
-        for word, frequency in word_count.iteritems(): 
-            frequency_file.writerow([word, frequency])
 
 # Takes about 20 minutes for ~80,000 words 
 # For initial comparison, use create_comparison then score
