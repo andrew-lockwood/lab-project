@@ -24,20 +24,6 @@ import re
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-class txtFiles (object): 
-    def __init__ (self, txt_folder = 'article_txt'): 
-        self.path = os.path.join (root_dir, txt_folder)
-        self.txt_dirs = []
-        for txt_file in os.listdir(self.path): 
-            self.txt_dirs.append(txt_file)
-
-    def __len__ (self): 
-        return len(self.txt_dirs)  
-
-    def __iter__ (self): 
-        for txt_file in self.txt_dirs:
-            yield txt_file
-
 class wordProcessor (object):
     def frequency_dictionary (self): 
         i = 1 
@@ -61,6 +47,26 @@ class wordProcessor (object):
             for word, frequency in c.iteritems(): 
                 frequency_file.writerow([word, frequency])
 
+class txtFiles (object): 
+    def __init__ (self, txt_folder = 'article_txt'): 
+        self.path = os.path.join (root_dir, txt_folder)
+        self.txt_dirs = []
+        for txt_file in os.listdir(self.path): 
+            self.txt_dirs.append(txt_file)
+
+    def __len__ (self): 
+        return len(self.txt_dirs)  
+
+    def __iter__ (self): 
+        for txt_file in self.txt_dirs:
+            yield txt_file
+    
+    def title_set (self):
+        titles = set()
+        for root, dir, files in os.walk(self.path): 
+            for file in files: 
+                titles.add(re.sub('.txt', '', str(file)))
+        return titles
 
 class xmlFiles (object): 
     """Iterates through every XML file in the XML directory."""
@@ -79,11 +85,13 @@ class xmlFiles (object):
         """Returns entire paths."""
         for xml_file in self.xml_dirs:
             yield os.path.join(self.path, xml_file)
-
+        
 class KeywordProcessor (object):
-"""Creates three dictionaries."""
+    """Creates three dictionaries."""
     def __init__ (self): 
         """Creates an XML file object variable."""
+        self.txt_files = txtFiles()
+        self.title_set = txt_files.title_set()
         self.xml_files = xmlFiles()
 
     def save_dict (self, d, fname):

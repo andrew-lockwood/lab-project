@@ -91,6 +91,22 @@ class tTransform (object):
                     self.cluster_ids.append(int(c_id))
                 break        
 
+    def score (self, n): 
+        cluster_ids = []
+        print 'loading cluster data'
+        with open('cluster.txt') as f:
+            for i in xrange(n - 1): f.next()
+            for line in f:
+                for c_id in line.split():
+                    cluster_ids.append(int(c_id))
+                break
+
+        y = np.array(cluster_ids)
+
+        s = silhouette_score(self.X, y, metric='cosine')
+
+        print s
+
     def getkwds (self, n, fname = 'kwd_counter.csv'):
         """Loads a list of keywords greater than n."""
         kwds = []
@@ -245,23 +261,6 @@ class tTransform (object):
 
         print tabulate(table, headers=['id', 'a_count', 'kwd_count', 'avg_kwds'], floatfmt=".3f")
 
-    def score (self, n): 
-        self.load_vectors()
-        cluster_ids = []
-        print 'loading cluster data'
-        with open('cluster.txt') as f:
-            for i in xrange(n - 1): f.next()
-            for line in f:
-                for c_id in line.split():
-                    cluster_ids.append(int(c_id))
-                break
-
-        y = np.array(cluster_ids)
-
-        s = silhouette_score(self.X, y, metric='cosine')
-
-        print s
-
     ### CLUSTERING ALGORITHMS ###
     def agg_cluster (self, n): 
         print 'agglomerizing ' + str(n) + ' clusters'
@@ -298,13 +297,9 @@ class tTransform (object):
 import datetime  
 n_clusters = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, \
 15, 16, 17, 18, 19, 20, 40, 60, 80, 100, 500]
-# add 30, 10, 70, 90 
 
-
-
-x = tTransform()
-for i in xrange(len(n_clusters)):
-    x.cluster_results(n = i, results = 'test2.txt')
+#for i in xrange(len(n_clusters)):
+#    x.cluster_results(n = i, results = 'test2.txt')
 
 #x.loadkwddict(100)
 #x.load_vectors()

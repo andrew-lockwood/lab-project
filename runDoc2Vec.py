@@ -2,15 +2,14 @@
 # Models: where models will be stored 
 # Scores: where model scores will be stored 
 # Articles: where every model as a .txt file is store (does not have to be processed)
-models_dir =    '/media/removable/SD Card/frontiers_data/models/doc2vec/'
 score_dir =     '/media/removable/SD Card/frontiers_data/models/word2vec_scores/'
 article_dir =   '/media/removable/SD Card/frontiers_data/article_txt/'
 
 # De-comment to set up gensims native logging. Extremely useful when 
 # training models to visualize progress
-#import logging
-#logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', \
-#level=logging.INFO)
+import logging
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', \
+level=logging.INFO)
 
 # Imported packages. Make sure gensim is installed.   
 import gensim.models  
@@ -18,6 +17,7 @@ import gensim.models
 from util import ProgressBar
 from util import time_this
 
+from collections import Counter
 from random import shuffle
 import re 
 import os
@@ -27,7 +27,7 @@ import multiprocessing
 cores = multiprocessing.cpu_count()
 
 class SentenceLabels (object):
-    def __init__ (self, article_dir = article_dir, label_lines = False):
+    def __init__ (self, label_lines = False):
         """Initialization creates a new randomized file list."""
         self.label_lines = label_lines
         self.file_dirs = []
@@ -61,35 +61,43 @@ class SentenceLabels (object):
         return num_lines
 
 class Doc2VecModel (object):    
-    def __init__ (self, model_name, models_dir = models_dir):
-        self.model_path = os.path.join(models_dir, model_name)
+    def __init__ (self, model_name, model_dir):
+        self.model_path = os.path.join(model_dir, model_name)
         self.model_name = model_name
         self.model = None
 
-    def create_model (self, label_lines = False, size = 300):
-        """Creates a model and builds vocab via a SentenceLabels object."""
+    def create_build_train_model (self, size): 
+        self.create_model(size)
+        self.build_vocab()
+        self.train_model()
+
+    def create_model (self, size):
+        """Initializes a model of a given size."""
         self.model = gensim.models.doc2vec.Doc2Vec(\
                         size = size, \
-                        min_count = 5, \
-                        alpha = 0.025, \
-                        min_alpha = 0.025, \
-                        workers = cores)
-        sentences = SentenceLabels(label_lines = label_lines)
-        self.model.build_vocab(sentences)
+                        workers = cores, \
+                        sample = 1e-5, \
+                        iter = 20)
+       
+    def build_vocab (self):
+        """Builds vocab from a SentenceLabels object."""
+        self.sentences = SentenceLabels()
+        self.model.build_vocab(self.sentences)
 
+    def train_model (self):
+        self.model.train(self.sentences)
+        """
         for epoch in range(10):
-            sentences = SentenceLabels(label_lines = label_lines)
             print 'Beginning Epoch: %s' % (epoch + 1)
-            self.model.train(sentences)
+            
             self.model.alpha -= 0.002 
             self.model.min_alpha = self.model.alpha
-
+        """
         self.model.save(self.model_path)
 
     def save_model (self):  
         self.model.save(self.model_path)
 
-    @time_this
     def load_model (self): 
         self.model = gensim.models.doc2vec.Doc2Vec.load(self.model_path)
 
