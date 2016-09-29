@@ -10,8 +10,8 @@ import numpy as np
 import csv
 import sys
 
-cluster_dir =   '/media/removable/SD Card/frontiers_data/clusters/'
-kwd_dir =       '/media/removable/SD Card/frontiers_data/data/kwd_data/'
+cluster_dir = '/media/removable/SD Card/frontiers_data/clusters/'
+kwd_dir =     '/media/removable/SD Card/frontiers_data/data/kwd_data/'
 
 class Cluster (object): 
     def __init__ (self, model_name, model_dir):
@@ -79,14 +79,26 @@ class Cluster (object):
             f.write('\n')
 
     def clear_data (self): 
-        a = raw_input()
+        """
+        WARNING: Calling this method with erase everything in the ID
+        and meta data file. This cannot be undone once called. 
+        Appending is used throughout this file for backup purposes.
+        """
+        import time
+        print "Nuking all of your hard earned data in 30 seconds"
+        print "Close the terminal to abort."
+
+        time.sleep(30)      
+
+        with open(self.meta_data, 'w') as f:    pass 
+        with open(self.cluster_ids, 'w') as f:  pass 
+        # Everything is gone. Are you happy now?
 
     def score (self):
         """Needs work"""
         y = np.array(self.cluster_ids)
 
         score = silhouette_score(self.np_vectors, y, metric="cosine")
-
         self.score = score(n)
 
 
