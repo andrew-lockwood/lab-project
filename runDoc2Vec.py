@@ -7,9 +7,9 @@ article_dir =   '/media/removable/SD Card/frontiers_data/article_txt/'
 
 # De-comment to set up gensims native logging. Extremely useful when 
 # training models to visualize progress
-import logging
-logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', \
-level=logging.INFO)
+#import logging
+#logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', \
+#level=logging.INFO)
 
 # Imported packages. Make sure gensim is installed.   
 import gensim.models  

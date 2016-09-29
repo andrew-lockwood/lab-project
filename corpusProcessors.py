@@ -1,14 +1,15 @@
-# Only needs to be ran once for creating a histogram of the data later on 
-# Make sure the load path is correct at the top of binnedHistogram when used
-root_dir =      '/media/removable/SD Card/frontiers_data/'
-data_dir =      '/media/removable/SD Card/frontiers_data/data'
-kwd_dir =       '/media/removable/SD Card/frontiers_data/data/kwd_data'
-word_dir =      '/media/removable/SD Card/frontiers_data/data/word_data'
+# Only needs to be ran once for creating a histogram of the data 
+# later on. Make sure the load path is correct at the top of 
+# binnedHistogram when used.
+root_dir =  '/media/removable/SD Card/frontiers_data/'
+data_dir =  '/media/removable/SD Card/frontiers_data/data'
+kwd_dir =   '/media/removable/SD Card/frontiers_data/data/kwd_data'
+word_dir =  '/media/removable/SD Card/frontiers_data/data/word_data'
 
-# Beautiful soup is required for xml_to_txt to work. It parses xml files 
-# rather nicely and makes getting text easy. Sentences has to also be 
-# imported from runWord2Vec, as the histogram creator takes data from 
-# that file as well. 
+# Beautiful soup is required for xml_to_txt to work. It parses xml 
+# files rather nicely and makes getting text easy. Sentences has to 
+# also be imported from runWord2Vec, as the histogram creator takes 
+# data from that file as well. 
 
 from bs4 import BeautifulSoup
 
@@ -114,7 +115,8 @@ class KeywordProcessor (object):
                 sys.stdout.write('\rFile Number: %s' % i)
             with open(file) as xml: 
                 soup = BeautifulSoup(xml, 'lxml')
-                title =  os.path.basename(os.path.normpath(re.sub('.xml', '', file)))
+                title =  os.path.basename(os.path.normpath(re.sub\
+                            ('.xml', '', file)))
                 if len(soup.find_all('kwd')) == 0: 
                     d[title].append("NULL")
                 else:
@@ -138,7 +140,8 @@ class KeywordProcessor (object):
                 sys.stdout.write('\rFile Number: %s' % i)
             with open(file) as xml: 
                 soup = BeautifulSoup(xml, 'lxml')
-                title =  os.path.basename(os.path.normpath(re.sub('.xml', '', file)))
+                title =  os.path.basename(os.path.normpath\
+                            (re.sub('.xml', '', file)))
                 if len(soup.find_all('kwd')) == 0: 
                     d["NULL"].append(title)
                 else:
@@ -162,7 +165,8 @@ class KeywordProcessor (object):
                 sys.stdout.write('\rFile Number: %s' % i)
             with open(file) as xml: 
                 soup = BeautifulSoup(xml, 'lxml')
-                title = os.path.basename(os.path.normpath(re.sub('.xml', '', file)))
+                title = os.path.basename(os.path.normpath\
+                            (re.sub('.xml', '', file)))
                 if len(soup.find_all('kwd')) == 0: 
                     c["NULL"] += 1
                 else:

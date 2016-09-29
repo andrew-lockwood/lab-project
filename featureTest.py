@@ -5,17 +5,17 @@
 #
 
 from runDoc2Vec import Doc2VecModel
-from clusterVectors import Cluster
+from clusterVectors import Cluster, AnalyzeCluster
 import os
 
 root_dir =      '/media/removable/SD Card/frontiers_data/'
 test_title =    'featureTest'
 
-training = True
-clustering = False
+training = False
+clustering = True
 
 # Number of features and clusters this test is looking at 
-features = [50, 100, 300, 500]
+features = [50]
 n_clusters = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, \
               15, 16, 17, 18, 19, 20, 40, 60, 80, 100, 500]
 
@@ -43,5 +43,4 @@ if clustering:
         model_name = str(features[i]) + "model"
         model_dir = feature_paths[features[i]]
         vec_cluster = Cluster(model_name, model_dir)
-        for n in n_clusters:
-            vec_cluster.agg_cluster(n)
+        vec_cluster.trial_cluster(n_clusters)
