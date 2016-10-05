@@ -1,43 +1,48 @@
-
-from sklearn.naive_bayes import BernoulliNB, GaussianNB, MultinomialNB
-from corpusProcessors import txtFiles
-from collections import defaultdict
-from random import shuffle
+# installed imports -- need scikit, gensim, and numpy 
+from sklearn.naive_bayes import BernoulliNB, GaussianNB
+from sklearn.cross_validation import cross_val_score
 import gensim.models
 import numpy as np
+
+# custom files that need to be in the same directory
+from corpusProcessors import txtFiles
 from util import time_this
-from sklearn.cross_validation import train_test_split
-from sklearn.cross_validation import cross_val_score
+
+# python imports 
+from random import shuffle
 import csv
 import re
 import os
 
+# directorys that need to be set 
 kwd_dir =     '/media/removable/SD Card/frontiers_data/data/kwd_data/'
+feature_dir = '/media/removable/SD Card/frontiers_data/featureTest'
 
 class Classify (object): 
-    def __init__ (self, keyword, size=None): 
-        """
-        Creates the sets needed for classification later one. 
-        If size is left as None, the full set of titles is used. 
-        If not, random titles will be pulled from the set for 
-        classification. 
-        """
-        self.keyword = keyword
+    def __init__ (self, features, size=None): 
+        """Sets object variables."""
         self.size  = size
+        self.features = features
+        self.load_vectors()
 
-    def load_articles (self):
-        features = 500
-        model_name = str(features) + 'model'
-        feature_dir = '/media/removable/SD Card/frontiers_data/featureTest'
-        model_dir = os.path.join(feature_dir, str(features), model_name)
-        model = gensim.models.doc2vec.Doc2Vec.load(model_dir)
-
+    def test_kwd (self, keyword):
+        """Takes a keyword and creates a classifier based on that
+        keyword.Calling several times in a row with different 
+        keywords in fairly fast since the slow step is loading 
+        vectors (1 minute for vector loading vs 1 second for grabbing
+        vectors and creating multiple classifiers).
+        """
         articles = txtFiles()
-        positive_set = articles.kwd_title_set(self.keyword)
-        negative_set = articles.complement_kwd_title_set(self.keyword)
+        positive_set = articles.kwd_title_set(keyword)
+        negative_set = articles.complement_kwd_title_set(keyword)
 
         positive_articles = self.shuffle_set(positive_set)
         negative_articles = self.shuffle_set(negative_set)
+
+        # Check to make sure testing doesn't access articles that 
+        # aren't there
+        if self.size>len(positive_articles) or self.size==None:
+            self.size = len(positive_articles)
 
         data = []
         for i in xrange(self.size):
@@ -47,23 +52,27 @@ class Classify (object):
         data = np.array(data)
         np.random.shuffle(data)
 
+        # Convert titles to vectors 
         vectors = []
         titles = data[:,0]
         for d in titles:
-            vectors.append(model.docvecs[d])
+            vectors.append(self.model.docvecs[d])
 
+        # Data and Target 
         d = np.array(vectors)
         t = data[:,1]
 
-        bnb = BernoulliNB()
-        scores = cross_val_score(bnb, d, t, cv=5)
-        print("Bernoulli Accuracy: %0.3f (+/- %0.3f)" % \
+        # Classifier testing -- using the same randomly generated 
+        # data, test different classifiers and scoring methods
+        gnb = GaussianNB()
+        scores = cross_val_score(gnb, d, t, cv=5, scoring='f1_macro')
+        print("f1 score:  %0.3f (+/- %0.3f)" % \
             (scores.mean(), scores.std() * 2))
 
-        gnb = GaussianNB()
         scores = cross_val_score(gnb, d, t, cv=5)
-        print("Guassian Accuracy:  %0.3f (+/- %0.3f)" % \
+        print("default:  %0.3f (+/- %0.3f)" % \
             (scores.mean(), scores.std() * 2))
+
 
     def shuffle_set (self, s): 
         """Shuffles a set and returns a list."""
@@ -71,21 +80,14 @@ class Classify (object):
         shuffle(x)
         return x
 
-@time_this
-def run_trials (kwd, fold, size, n): 
-    scores = []
-    for i in xrange(n): 
-        c = Classify(kwd, fold=fold, size=size)
-        c.load_vectors(500)
-        for score in c.train():
-            scores.append(score)
-    x = np.array(scores)
-    print "total trials: " + str(n)
-    print "variance: " + str(np.var(x))
-    print "average: " + str(np.average(x))
+    def load_vectors (self): 
+        """Loads a trained model from featureTest."""
+        model_name = str(self.features) + 'model'
+        model_dir = os.path.join(feature_dir, \
+                        str(self.features), model_name)
+        self.model = gensim.models.doc2vec.Doc2Vec.load(model_dir)
 
-#run_trials('emotion', 5, 200, 5)
 
-c = Classify('emotion', size=200)
-c.load_articles()
-
+c = Classify(features=100, size=400)
+c.test_kwd('emotion')
+c.test_kwd('attention')
