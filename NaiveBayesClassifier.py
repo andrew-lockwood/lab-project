@@ -20,7 +20,6 @@ feature_dir = '/media/removable/SD Card/frontiers_data/featureTest'
 
 class Classify (object): 
     def __init__ (self, features, size=None): 
-        """Sets object variables."""
         self.size  = size
         self.features = features
         self.load_vectors()
