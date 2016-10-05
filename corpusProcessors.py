@@ -46,10 +46,10 @@ class wordProcessor (object):
         with open(save_path, 'wb') as f: 
             w = csv.writer(f)
             for word, frequency in c.iteritems(): 
-                frequency_file.writerow([word, frequency])
+                w.writerow([word, frequency])
 
 class txtFiles (object): 
-    def __init__ (self, txt_folder = 'article_txt'): 
+    def __init__ (self, txt_folder='article_txt'): 
         self.path = os.path.join (root_dir, txt_folder)
         self.txt_dirs = []
         for txt_file in os.listdir(self.path): 
@@ -63,15 +63,33 @@ class txtFiles (object):
             yield txt_file
     
     def title_set (self):
-        titles = set()
+        title_set = set()
         for root, dir, files in os.walk(self.path): 
             for file in files: 
-                titles.add(re.sub('.txt', '', str(file)))
-        return titles
+                title_set.add(re.sub('.txt', '', str(file)))
+        return title_set
+
+    def kwd_title_set (self, keyword):
+        kwd_title_set = set()
+        kwddictdir = os.path.join(kwd_dir, 'kwd_to_title.csv')
+        with open(kwddictdir) as f:
+            r = csv.reader(f)
+            for kwd, titles in r:
+                if kwd == keyword:
+                    for title in re.findall(r"'(.*?)'", titles, \
+                                    re.DOTALL):
+                        kwd_title_set.add(title)
+                    break
+        return kwd_title_set
+
+    def complement_kwd_title_set (self, keyword):
+        title_set = self.title_set()
+        kwd_title_set = self.kwd_title_set(keyword)
+        return title_set.difference(kwd_title_set)
 
 class xmlFiles (object): 
     """Iterates through every XML file in the XML directory."""
-    def __init__ (self, xml_folder = 'article_xml'): 
+    def __init__ (self, xml_folder='article_xml'): 
         """Creates a list of XML files on the disk."""
         self.path = os.path.join (root_dir, xml_folder)
         self.xml_dirs = []
@@ -86,13 +104,20 @@ class xmlFiles (object):
         """Returns entire paths."""
         for xml_file in self.xml_dirs:
             yield os.path.join(self.path, xml_file)
+
+    def title_set (self):
+        titles = set()
+        for root, dir, files in os.walk(self.path): 
+            for file in files: 
+                titles.add(re.sub('.xml', '', str(file)))
+        return titles
         
 class KeywordProcessor (object):
     """Creates three dictionaries."""
     def __init__ (self): 
         """Creates an XML file object variable."""
         self.txt_files = txtFiles()
-        self.title_set = txt_files.title_set()
+        self.title_set = self.txt_files.title_set()
         self.xml_files = xmlFiles()
 
     def save_dict (self, d, fname):
@@ -182,10 +207,17 @@ class KeywordProcessor (object):
             for key, value in c.most_common():
                 w.writerow([key, value])
 
-def runKeywordProcessor(): 
-    kp = KeywordProcessor()
-    kp.title_to_kwd()
-    kp.kwd_to_title()
-    kp.kwd_counter()
+    def get_kwds_greater_than (self, n, fname='kwd_counter.csv'):
+        """Loads a list of keywords greater than n."""
+        kwds = {}
+        path = os.path.join(kwd_dir, fname)
 
-#runKeywordProcessor()
+        with open(path) as f: 
+            r = csv.reader(f)
+            for kwd, count in r: 
+                if kwd == 'NULL':   # Skip the null keyword
+                    continue
+                elif int(count) > n: 
+                    kwds[kwd] = int(count)
+
+        return kwds  
