@@ -6,3 +6,6 @@ __pycache__/
 # Trained models
 model/doc2vecmodels/*
 model/word2vecmodels/*
+
+# SQLite Database
+data/frontiers_corpus.db
