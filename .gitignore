@@ -2,3 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Trained models
+model/doc2vecmodels/*
+model/word2vecmodels/*
