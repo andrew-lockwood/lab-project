@@ -3,11 +3,40 @@
 
 ### The Database
 
-ArticleInformation  (articleID, date, type, title)
-ArticleTXT          (articleID, wordcount, linecount, txt)
+**ArticleInformation**
 
-OriginalKeywords    (articleID, keyword)
-KeywordForms        (keyword, parse, redirect, stem)
+name | type | description
+--- | --- | ---
+articleID | text | Unique identifier of the form "journal.year.number" (primary key)
+title | text | Title of the article
+received | date| When the article was recieved by frontiers
+type | text | Broad category the article falls under
+
+**ArticleTXT**
+
+name | type | description
+--- | --- | ---
+articleID | text | Foreign key referencing ArticleInformation.articleID
+txt | text | Full text of the article (only if the paper has a keyword assigned)
+wordcount | integer | Total number of words in txt 
+linecount | integer | Total number of lines found during XML parsing
+
+**OriginalKeywords**
+
+name | type | description
+--- | --- | ---
+articleID | text | Foreign key referencing ArticleInformation.articleID
+keyword | text | Assignment found during XML parsing
+
+**KeywordForms**
+
+name | type | description
+--- | --- | ---
+keyword | text | Foreign key referencing OriginalKeywords.keyword
+parse | text | Keyword in lower case, with spaces replaced with underscores
+stem | text | Root of the keyword found using an NLTK stemmer (Porter)
+redirect | text | Title of the Wikipedia article the keyword redirects to
+
 
 ArticleInformation holds all the information related to data scraped from xml file and holds the primary key articleID. ArticleTXT holds full text of files IF they contain a keyword in OriginalKeywords, the table storing keywords assigned by authors.  Finally, KeywordForms contains three alternate, but algorithmic, ways of modifying original keywords.  
 
