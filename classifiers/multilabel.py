@@ -80,7 +80,6 @@ def run(features, exclude, test):
     for title, kwds in load_title_kwd(5).items():
         if title in e:
             continue
-
         else:
             vectors.append(model.docvecs[title])
             targets.append(kwds)

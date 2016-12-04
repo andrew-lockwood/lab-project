@@ -1,22 +1,25 @@
 
-
-import sys
-sys.path.insert(0, "C:\\Users\\Andrew\\lab-project\\data")
+import sqlite3
 import matplotlib.pyplot as plt
-from dbinterface import DatabaseInterface
 import re
-di = DatabaseInterface("C:\\Users\\Andrew\\lab-project\\data\\frontiers_corpus.db")
+from collections import Counter
+db = "C:\\Users\\Andrew\\lab-project\\data\\frontiers_corpus.db"
 
 def wordvsline():
     q = "SELECT wordcount, linecount FROM ArticleTXT"
-    x,y = zip(*di.execute_query(q))
+    curr.execute(q)
+    x,y = zip(*curr.fetchall())
+
+    mpl_fig = plt.figure()
+    ax = mpl_fig.add_subplot(111)
 
     plt.scatter(x,y)
-    plt.xlim(0,)
-    plt.ylim(0,)
-
+    plt.xlim(0,25000)
+    plt.ylim(0,450)
+    ax.set_xlabel('Word Count')
+    ax.set_ylabel('Line Count')
+    ax.set_title('Words vs Lines')
     plt.show()
-
 
 
 def titles_between(start, end):
@@ -91,3 +94,58 @@ def graph(value):
     plt.xticks(x, labels, rotation=45)
     plt.show()
 
+
+
+def kwd_frequency():
+    c1 = Counter()
+    c2 = Counter()
+    q = """ SELECT  keyword, count(articleID)
+            FROM    OriginalKeywords 
+            GROUP BY keyword"""
+
+    data = curr.execute(q)
+
+    n = 10
+    for kwd, count in data.fetchall():
+        if count < 20:
+            c2[int(count)] += 1
+        else:
+            c1[int(count/n)] += 1
+
+
+    x = [i for i in range(len(c1))]
+
+    labels,y = zip(*c1.items())
+
+    labels = ["%s-%s"%(l*n, l*n+n) for l in labels]
+
+    mpl_fig = plt.figure()
+    ax = mpl_fig.add_subplot(111)
+
+    plt.margins(0.025, 0)
+
+    plt.bar(x, y, align='center')
+    plt.xticks(x, labels, rotation=90)
+    plt.show()
+
+
+    x = [i for i in range(len(c2))]
+
+    labels,y = zip(*c2.items())
+
+    mpl_fig = plt.figure()
+    ax = mpl_fig.add_subplot(111)
+
+    plt.margins(0.025, 0)
+
+    plt.bar(x, y, align='center')
+    plt.xticks(x, labels, rotation=90)
+    plt.show()
+
+
+
+
+if __name__ == "__main__":
+    conn = sqlite3.connect(db)
+    curr = conn.cursor()
+    kwd_frequency()

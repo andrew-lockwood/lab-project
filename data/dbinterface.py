@@ -1,18 +1,37 @@
 import sqlite3
+import numpy as np
+import io
 
-class DatabaseInterface (object):
-    def __init__ (self, database):
+
+class DatabaseInterface:
+    def __init__(self, database):
         if database != ":memory:":
             if '.db' not in database: 
                 database += '.db'
 
-        self.conn = sqlite3.connect(database)
-        self.c = self.conn.cursor()
+        # Make it so numpy arrays can be i
+        sqlite3.register_adapter(np.ndarray, self.adapt_array)
+        sqlite3.register_converter("NUMPY", self.convert_array)
 
-    def execute_query (self, q):
+        self.conn = sqlite3.connect(database, 
+                                    detect_types=sqlite3.PARSE_DECLTYPES)
+
+        self.curr = self.conn.cursor()
+
+    def execute_query(self, q):
         self.c.execute(q) 
-
         return self.c.fetchall()
+
+    def adapt_array(self, arr):
+        out = io.BytesIO()
+        np.save(out, arr)
+        out.seek(0)
+        return sqlite3.Binary(out.read())
+
+    def convert_array(self, text):
+        out = io.BytesIO(text)
+        out.seek(0)
+        return np.load(out)
 
     def add_primary_table (self, table_name, primaryKey, primaryKeyType):
         if self.table_exists(table_name):
@@ -75,6 +94,14 @@ class DatabaseInterface (object):
     def bulk_insert_row_txt(self, rows):
         for i, row in enumerate(rows):
             self.c.execute("INSERT INTO ArticleTXT VALUES (?, ?, ?, ?)", row)
+            if i % 200 == 0: 
+                self.conn.commit()
+        
+        self.conn.commit()
+
+    def bulk_insert_np_row(self, rows):
+        for i, row in enumerate(rows):
+            self.c.execute("INSERT INTO ArticleVectors VALUES (?, ?)", row)
             if i % 200 == 0: 
                 self.conn.commit()
         

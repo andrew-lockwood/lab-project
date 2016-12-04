@@ -4,7 +4,7 @@ import urllib.request
 import multiprocessing
 import datetime
 
-from dbtest import DatabaseInterface
+from dbinterface import DatabaseInterface
 
 import re
 import os
@@ -12,7 +12,6 @@ import operator
 from nltk.stem.porter import *
 
 xml = "C:\\Users\\Andrew\\Desktop\\frontiers_data\\article_xml"
-
 
 class Article (object):
     """Holds data about tables related to Articles.
@@ -27,7 +26,7 @@ class Article (object):
 
     """
 
-    def __init__(self, database="lab_project"):
+    def __init__(self, database="frontiers_corpus"):
         self.di = DatabaseInterface(database)
         self.tn = "ArticleInformation"
 
@@ -290,9 +289,13 @@ class ArticleTXT (Article):
 
 
 
+
+
+
+
+
 timing = False
 
 
 if __name__ == "__main__":
-    at = ArticleTXT()
-    at.get_text()
+    pass
