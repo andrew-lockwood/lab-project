@@ -1,5 +1,4 @@
 
-
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.naive_bayes import BernoulliNB, GaussianNB
 
@@ -8,10 +7,10 @@ import gensim.models
 import sqlite3
 import numpy as np
 
+import settings
 import sys
 from tabulate import tabulate
 
-di = DatabaseInterface("C:\\Users\\Andrew\\lab-project\\data\\frontiers_corpus.db")
 
 def get_titles(key, total):
     q = """ SELECT      DISTINCT articleID
@@ -23,10 +22,9 @@ def get_titles(key, total):
             HAVING      count(articleID) >= {t})
             AND         {k} != 'NULL'""".format(k=key, t=total)
 
-    return di.execute_query(q)
+    return curr.execute(q).fetchall()
 
 def graph():
-    di.print_schema()
 
     totals = [i*10 for i in range(26)]
     x = [i for i in range(26)]
@@ -89,18 +87,16 @@ def run():
             GROUP BY    articleID) a, ArticleTXT b
             WHERE       a.articleID = b.articleID""".format(k='redirect', t=200)
 
-    for txt, kwds in di.execute_query(q2):
+    for txt, kwds in curr.execute(q2).fetchall():
         text.append(txt)
         targets.append(kwds.split(','))
 
     t = mlb.fit_transform(targets)
-    classif.fit(text, t)
-    #print (di.execute_query(q2))
 
-    #print(di.execute_query(q2))
+    classif.fit(text, t)
 
 
 if __name__ == "__main__":
     conn = sqlite3.connect(settings.db)
     curr = conn.cursor()
-    schema()
+    run()

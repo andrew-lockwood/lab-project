@@ -7,7 +7,7 @@ def ArticleInformation():
                 articleID   TEXT PRIMARY KEY,
                 title       TEXT,
                 received    DATE, 
-                type        TEXT)"""
+                type        TEXT)                           """
 
     curr.execute(q)
     conn.commit()
@@ -20,7 +20,7 @@ def ArticleTXT():
                 wordcount   INTEGER, 
                 linecount   INTEGER,
                 FOREIGN KEY(articleID) 
-                REFERENCES ArticleInformation(articleID))"""
+                REFERENCES ArticleInformation(articleID))   """
 
     curr.execute(q)
     conn.commit()
@@ -31,7 +31,7 @@ def OriginalKeywords():
                 articleID   TEXT,
                 keyword     TEXT,
                 FOREIGN KEY(articleID) 
-                REFERENCES ArticleInformation(articleID))"""
+                REFERENCES ArticleInformation(articleID))   """
 
     curr.execute(q)
     conn.commit()
@@ -44,7 +44,7 @@ def KeywordForms():
                 stem        TEXT,
                 redirect    TEXT,
                 FOREIGN KEY(keyword) 
-                REFERENCES OriginalKeywords(keyword))"""
+                REFERENCES OriginalKeywords(keyword))       """
 
     curr.execute(q)
     conn.commit()
@@ -55,7 +55,7 @@ def ArticleVectors():
                 articleID   TEXT,
                 vector      NUMPY,
                 FOREIGN KEY(articleID) 
-                REFERENCES ArticleInformation(articleID))"""
+                REFERENCES ArticleInformation(articleID))   """
 
     curr.execute(q)
     conn.commit()
