@@ -3,3 +3,4 @@ import sys
 sys.path.insert(0, os.path.abspath('..'))
 
 from util.settings import settings
+from util.progressbar import ProgressBar

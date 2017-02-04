@@ -1,12 +1,22 @@
-
 import sqlite3 
-from lab_project.util import directories
+from context import settings
+
+import matplotlib.pyplot as plt
 
 
+def keyword_grams():
+    q = """ SELECT  DISTINCT(keyword)
+            FROM    OriginalKeywords    """
+
+    curr.execute(q)
+
+    keywords = [k[0] for k in curr.fetchall()]
+
+    print(keywords)
 
 
-db = "C:\\Users\\Andrew\\lab_project\\data\\frontiers_corpus.db"
 
 if __name__ == "__main__":
-	print(directories.kwd_dir)
-	conn = sqlite3.connect(db)
+    conn = sqlite3.connect(settings.db)
+    curr = conn.cursor()
+    keyword_grams()

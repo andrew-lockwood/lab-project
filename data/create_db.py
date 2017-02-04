@@ -65,7 +65,7 @@ if __name__ == "__main__":
     conn = sqlite3.connect(settings.db)
     curr = conn.cursor()
 
-    #ArticleInformation()
+    ArticleInformation()
     #ArticleTXT()
     #OriginalKeywords()
     #KeywordForms()

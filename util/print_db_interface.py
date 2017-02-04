@@ -1,7 +1,8 @@
 
 import sqlite3
-import settings
 import sys
+
+from context import settings 
 
 
 def get_tables():
