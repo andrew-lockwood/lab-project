@@ -1,5 +1,5 @@
 import sqlite3
-import settings
+from context import settings
 
 
 def ArticleInformation():
@@ -65,8 +65,8 @@ if __name__ == "__main__":
     conn = sqlite3.connect(settings.db)
     curr = conn.cursor()
 
-    ArticleInformation()
-    ArticleTXT()
-    OriginalKeywords()
-    KeywordForms()
-    ArticleVectors()
+    #ArticleInformation()
+    #ArticleTXT()
+    #OriginalKeywords()
+    #KeywordForms()
+    #ArticleVectors()

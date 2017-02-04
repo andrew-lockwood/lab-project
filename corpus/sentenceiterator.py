@@ -13,9 +13,9 @@ import nltk.data
 from gensim.models.doc2vec import LabeledSentence
 import sqlite3
 
-db = "C:\\Users\\Andrew\\lab_project\\data\\frontiers_corpus.db"
+from context import settings 
 
-conn = sqlite3.connect(db)
+conn = sqlite3.connect(settings.db)
 curr = conn.cursor()
 
 

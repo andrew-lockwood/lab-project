@@ -1,7 +1,7 @@
 import sqlite3
 import numpy as np
 import io
-import settings
+from context import settings 
 
 from bs4 import BeautifulSoup
 import urllib.request
