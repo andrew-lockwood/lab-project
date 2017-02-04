@@ -4,8 +4,8 @@ __pycache__/
 *$py.class
 
 # Trained models
-model/doc2vecmodels/*
-model/word2vecmodels/*
+*/doc2vecmodels/*
+*/word2vecmodels/*
 
 # SQLite Database
 */frontiers_corpus.db
