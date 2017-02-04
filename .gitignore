@@ -12,3 +12,6 @@ data/frontiers_corpus.db
 
 # Settings 
 settings.py
+
+# Random Files 
+misc/*

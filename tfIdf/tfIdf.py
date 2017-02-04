@@ -2,11 +2,65 @@
 from sklearn.feature_extraction.text import TfidfVectorizer 
 from sklearn.decomposition import NMF, LatentDirichletAllocation
 from time import time
-import settings
 import sqlite3
 import os
 import sys
 import random
+
+import gensim.models  
+from collections import defaultdict
+from context import settings
+
+model = gensim.models.Word2Vec.load(settings.model)
+
+
+def random_title():
+    """Fetches a random title from the frontiers database"""
+    q = """ SELECT  ArticleID
+            FROM    ArticleInformation
+            ORDER BY RANDOM()
+            LIMIT 1000                 """
+
+    curr.execute(q)
+
+    titles = [t[0] for t in curr.fetchall()]
+
+    return titles
+
+def words_greater_than(titles, n, lim):
+    d = defaultdict(list)
+    data = []
+
+    for title in titles: 
+        try:
+            vec = model.docvecs[title]
+        except KeyError as e:
+            continue
+        sims = [score for score in model.most_similar([vec], topn=n)]
+        words = []
+        for word, score in sims: 
+            if score > lim:
+                words.append(word)
+            else:
+                 break
+
+        data.append(" ".join(words))
+
+    vectorizer = TfidfVectorizer(max_df=0.95, min_df=2,
+                                max_features=1000,
+                                stop_words='english')
+    t0 = time()
+
+    tfidf = vectorizer.fit_transform(data)
+
+    features = vectorizer.get_feature_names()
+
+    print("done in %0.3fs. " % (time() - t0))
+
+    nmf = NMF(n_components=10, random_state=1,
+                alpha=0.1, l1_ratio=0.5).fit(tfidf)
+
+    print_top_words(nmf, features, 10)
 
 def random_titles(n, m=None):
     """Selects n titles at random.
@@ -87,5 +141,5 @@ if __name__ == "__main__":
                 detect_types=sqlite3.PARSE_DECLTYPES)
 
     curr = conn.cursor()
-    #print(random_titles(4))
-    run(10)
+    #words_greater_than(random_title(), 10, 0.2)
+    run(1000)
