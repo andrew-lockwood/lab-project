@@ -8,7 +8,7 @@ model/doc2vecmodels/*
 model/word2vecmodels/*
 
 # SQLite Database
-data/frontiers_corpus.db
+*/frontiers_corpus.db
 
 # Settings 
 settings.py
