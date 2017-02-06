@@ -39,19 +39,6 @@ class UnlabeledSentences:
                 parsed_line = re.sub('[^a-z ]', '', temp.lower())
                 yield parsed_line.split()
 
-class RawDocuments: 
-    def __init__(self):
-        q = """ SELECT  articleID, txt 
-                FROM    articleTXT      
-                ORDER BY RANDOM() LIMIT 2000"""  # Set for testing
-
-        curr.execute(q)
-
-        self.articles = curr.fetchall()
-
-    def __iter__(self):
-        for article in self.articles:
-            yield article[1]
 
 
 
