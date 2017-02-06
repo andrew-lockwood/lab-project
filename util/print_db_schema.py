@@ -27,8 +27,10 @@ def get_columns(table_name):
 
 
 def print_schema():
+    print("Tables".ljust(20) + "| Attributes ")
+    print("--------------------|----------------------------------")
     for table in get_tables():
-        print(table.ljust(20) + ", ".join(get_columns(table)))
+        print(table.ljust(20) + "| "+", ".join(get_columns(table)))
 
 
 if __name__ == "__main__":
