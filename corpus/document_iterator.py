@@ -11,8 +11,8 @@ class RawDocuments:
 
     def __init__(self):
         q = """ SELECT  articleID, txt 
-                FROM    articleTXT      
-                ORDER BY RANDOM() LIMIT 4"""  # Set for testing
+                FROM    articleTXT      """
+                #ORDER BY RANDOM() LIMIT 4"""  # Set for testing
 
         curr.execute(q)
 
