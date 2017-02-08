@@ -1,101 +1,23 @@
-
-import sqlite3
-import gensim.models
 import numpy as np
 
+
+from sklearn.feature_extraction.text import TfidfTransformer, CountVectorizer
+from sklearn.pipeline import Pipeline
 from sklearn.cross_validation import KFold
 from sklearn.metrics import confusion_matrix, f1_score
 from sklearn.naive_bayes import GaussianNB
+from sklearn.naive_bayes import MultinomialNB
 
-from random import shuffle
-
-from context import settings 
+from time import time
 
 import sys
 
-
-
-conn = sqlite3.connect(settings.db)
-curr = conn.cursor()
-model = gensim.models.Word2Vec.load(settings.model)
+from context import DataLoader
 
 display = False
 
 
-def get_original_data(kwd, scale=1):
-    """Fetches original author assigned keywords."""
-    data = []
-    q = """ SELECT  articleID
-            FROM    OriginalKeywords
-            WHERE   keyword='{k}'       """.format(k=kwd)
-
-    data.extend([(t[0],'1') for t in curr.execute(q).fetchall()])
-    pos_count = len(data)
-
-    q = """ SELECT  DISTINCT(articleID)
-            FROM    OriginalKeywords
-            WHERE   articleID NOT IN
-                   (SELECT  articleID
-                    FROM    OriginalKeywords
-                    WHERE   keyword = '{k}')
-            ORDER BY RANDOM() LIMIT {n}""".format(k=kwd,n=pos_count)
-
-    data.extend([(t[0],'0') for t in curr.execute(q).fetchall()])
-    neg_count = len(data) - pos_count
-
-    shuffle(data)
-    return data
-
-
-def get_redirect_data(kwd, scale=1):
-    data = []
-    q = """ SELECT  articleID
-            FROM    OriginalKeywords NATURAL JOIN KeywordForms
-            WHERE   redirect='{k}'       """.format(k=kwd)
-
-    data.extend([(t[0],'1') for t in curr.execute(q).fetchall()])
-    pos_count = len(data)
-
-    q = """ SELECT  DISTINCT(articleID)
-            FROM    OriginalKeywords NATURAL JOIN KeywordForms
-            WHERE   articleID NOT IN
-                   (SELECT  articleID
-                    FROM    OriginalKeywords NATURAL JOIN KeywordForms
-                    WHERE   redirect='{k}')
-            ORDER BY RANDOM() LIMIT {n}""".format(k=kwd,n=pos_count)
-
-    data.extend([(t[0],'0') for t in curr.execute(q).fetchall()])
-    neg_count = len(data) - pos_count
-
-    shuffle(data)
-    return data
-
-
-def get_stem_data(kwd, scale=1):
-    data = []
-    q = """ SELECT  articleID
-            FROM    OriginalKeywords NATURAL JOIN KeywordForms
-            WHERE   stem='{k}'       """.format(k=kwd)
-
-    data.extend([(t[0],'1') for t in curr.execute(q).fetchall()])
-    pos_count = len(data)
-
-    q = """ SELECT  DISTINCT(articleID)
-            FROM    OriginalKeywords NATURAL JOIN KeywordForms
-            WHERE   articleID NOT IN
-                   (SELECT  articleID
-                    FROM    OriginalKeywords NATURAL JOIN KeywordForms
-                    WHERE   stem='{k}')
-            ORDER BY RANDOM() LIMIT {n}""".format(k=kwd,n=pos_count)
-
-    data.extend([(t[0],'0') for t in curr.execute(q).fetchall()])
-    neg_count = len(data) - pos_count
-
-    shuffle(data)
-    return data
-
-
-def run_classifier(vectors, targets):
+def run_vec_classifier(vectors, targets):
     k_fold = KFold(n=len(vectors), n_folds=5)
     scores = []
     confusion = np.array([[0, 0], [0, 0]])
@@ -124,15 +46,54 @@ def run_classifier(vectors, targets):
     return (avg_score, confusion)
 
 
+def run_bow_classifier(text, targets):
+    k_fold = KFold(n=len(text), n_folds=5)
+    scores = []
+    confusion = np.array([[0, 0], [0, 0]])
+    for train_indices, test_indices in k_fold:
+        train_text = [text[i] for i in train_indices] 
+        train_y = [targets[i] for i in train_indices]
+
+        test_text = [text[i] for i in test_indices] 
+        test_y = [targets[i] for i in test_indices] 
+
+        text_clf = Pipeline([('vect', CountVectorizer()),
+                             ('tfidf', TfidfTransformer()),
+                             ('clf', GaussianNB())])
+
+        text_clf = text_clf.fit(train_text, train_y)
+        predictions = text_clf.predict(test_text)
+        confusion += confusion_matrix(test_y, predictions)
+        score = f1_score(test_y, predictions, pos_label='1')
+        scores.append(score)
+
+    avg_score = sum(scores)/len(scores)
+
+    print('Total articles classified:', len(text))
+    print('Score:', avg_score)
+    print('Confusion matrix:')
+    print(confusion)
+
+
+
 if __name__ == "__main__":
     display = True
     keyword = sys.argv[1]
-    data = get_original_data(keyword)
-    titles, targets = zip(*data)
-    vectors = [model.docvecs[t] for t in titles]
+    data = DataLoader()
 
-    run_classifier(vectors, targets)
+    data.analyze(keyword)
 
-    #d2v_tester('functional magnetic resonance imaging',n,'redirect')
-    #d2v_tester('fMRI',n,'original')
+    t0 = time()
+    data.set_type("text")
+    text, targets = zip(*[t for t in data])
+    print("Running Bag of Words Classifier...")
+    run_bow_classifier(text, targets)
 
+    data.set_type("vectors")
+    vector, targets = zip(*[t for t in data])
+
+    print("--------------------------------")
+    print("Running Doc2Vec Classifier...")
+    run_vec_classifier(vector, targets)
+
+    print("done in %0.3fs." % (time() - t0))

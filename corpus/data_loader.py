@@ -1,7 +1,7 @@
 from context import settings 
 
 
-
+import gensim.models
 from random import shuffle
 import sqlite3
 

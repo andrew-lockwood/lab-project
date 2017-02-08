@@ -7,4 +7,7 @@ The bag of words (bow) vectorizer takes the document iterator and converts each 
 
 TODO:
 	1. Convert to bigrams and see if that changes -- only do this when there is an efficient pipeline between tfidf and a classifier
+
+
+
 	
