@@ -5,7 +5,7 @@
 
 If everything is loaded properly, running `python single_label.py emotion` will output
 
-"""
+```
 Running Bag of Words Classifier...
 Total articles classified: 448
 Score: 0.793345380257
@@ -20,7 +20,7 @@ Confusion matrix:
 [[197  27]
  [ 38 186]]
 done in 30.394s.
-"""
+```
 
 ### Issues to Resolve
 
@@ -28,16 +28,16 @@ done in 30.394s.
 
 Running doc2vec with Multinomial gives the error:
 
-"""
+```
 ValueError: Input X must be non-negative
-"""
+```
 
 Where X is the input vector 
 
 Running bag of words with Gaussian gives the error: 
 
-"""
+```
 TypeError: A sparse matrix was passed, but dense data is required. Use X.toarray() to convert to a dense numpy array.
-"""
+```
 
 2. Tf-Idf is trained only on the subset of a corpus, whereas do2vec uses the entire corpus 
