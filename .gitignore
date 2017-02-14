@@ -16,3 +16,6 @@ settings.py
 
 # Random Files 
 misc/*
+
+# Bigram List (too large)
+normalization/bigrams.txt
