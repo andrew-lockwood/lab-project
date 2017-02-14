@@ -1,23 +1,26 @@
-# Simple iterator that goes over every full text article in
-# the database 
-import sqlite3
+# Simple iterator that goes over every full text article in the database 
+# Uses the same parsing as the unlabled sentence iterator
 
+import sqlite3
+import re
 from context import settings
+
 conn = sqlite3.connect(settings.db)
 curr = conn.cursor()
 
-
-class RawDocuments:
-
+class Documents:
     def __init__(self):
         q = """ SELECT  articleID, txt 
-                FROM    articleTXT      """
-                #ORDER BY RANDOM() LIMIT 4"""  # Set for testing
+                FROM    articleTXT      
+                WHERE 	articleID IN (SELECT DISTINCT(articleID) 
+                						FROM OriginalKeywords)  """  
 
         curr.execute(q)
-
         self.articles = curr.fetchall()
 
     def __iter__(self):
         for article in self.articles:
-            yield article[1]
+            parsed_article = re.sub('[^a-z ]', '', article[1].lower())
+            title = article[0]
+
+            yield (title, parsed_article)

@@ -1,6 +1,5 @@
 from context import settings 
 
-
 import gensim.models
 from random import shuffle
 import sqlite3
@@ -65,9 +64,9 @@ class DataLoader():
         elif self.datatype == "vectors":
             model = gensim.models.Word2Vec.load(settings.model)
             for title, label in self.data: 
-                vector = model.docvecs[title]
-
-                yield(vector, label) 
-
-
+                try:
+                    vector = model.docvecs[title[0:16]]
+                    yield(vector, label) 
+                except KeyError as e:
+                    print(title[0:16])
 

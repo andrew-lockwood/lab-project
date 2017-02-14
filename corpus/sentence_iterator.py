@@ -22,7 +22,7 @@ curr = conn.cursor()
 class UnlabeledSentences: 
     def __init__(self):
         q = """ SELECT  articleID, txt 
-                FROM    articleTXT      """
+                FROM    articleTXT    """
                 #WHERE   articleID='fpsyg.2010.00030'"""  # Set for testing
 
         curr.execute(q)
@@ -38,8 +38,6 @@ class UnlabeledSentences:
                 temp = re.sub('-', ' ', line)
                 parsed_line = re.sub('[^a-z ]', '', temp.lower())
                 yield parsed_line.split()
-
-
 
 
 class LabeledSentences: 
