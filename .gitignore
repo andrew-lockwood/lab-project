@@ -11,9 +11,6 @@ models/bagofwordsmodels/*.pickle
 # SQLite Database
 */frontiers_corpus.db
 
-# Settings 
-settings.py
-
 # Random Files 
 misc/*
 
