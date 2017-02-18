@@ -8,12 +8,13 @@ from context import settings
 conn = sqlite3.connect(settings.db)
 curr = conn.cursor()
 
+
 class Documents:
     def __init__(self):
-        q = """ SELECT  articleID, txt 
-                FROM    articleTXT      
-                WHERE 	articleID IN (SELECT DISTINCT(articleID) 
-                						FROM OriginalKeywords)  """  
+        q = (" SELECT  articleID, txt \n"
+             " FROM    articleTXT      \n"
+             " WHERE   articleID IN (SELECT DISTINCT(articleID) \n"
+             "                       FROM   OriginalKeywords)  ")
 
         curr.execute(q)
         self.articles = curr.fetchall()
