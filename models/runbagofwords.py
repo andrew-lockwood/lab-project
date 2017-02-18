@@ -1,31 +1,38 @@
-
+# Class that iterates over full text documents -- in corpus/document_iterator
 from context import Documents 
+
 from sklearn.feature_extraction.text import CountVectorizer
 import pickle
 from time import time
 
-def create_model():
-	tf = CountVectorizer(max_df=0.95,min_df=2,stop_words='english')
 
-	titles, text = zip(*Documents())
-	vector_dict = {}
+class BoW: 
 
-	t0 = time()
-	tf_model = tf.fit_transform(text)
+    def __init__(self): 
+        self.model_path = "bagofwordsmodels/bow.pickle"
+        self.titles_path = "bagofwordsmodels/titles.pickle"
 
-	for i in range(tf_model.shape[0]):
-		vector_dict[titles[i]] = tf_model[i]
+    def create_model(self):
+        t0 = time()
 
-	pickle.dump(vector_dict, open("bagofwordsmodels/bow.pickle", "wb"))
+        tf = CountVectorizer(max_df=0.95,min_df=2,stop_words='english')
 
-	print(time() - t0)
+        titles, text = zip(*Documents(70))
 
-def load_model():
-	vector_dict = pickle.load(open("bagofwordsmodels/bow.pickle", "rb"))
+        tf_model = tf.fit_transform(text)
+        
+        pickle.dump(tf_model, open(self.model_path, "wb"))
+        pickle.dump(titles, open(self.titles_path, "wb"))
 
-	return vector_dict
-	for k, v in vector_dict.items():
-		print(k)
+        print(time() - t0)
 
-create_model()
-test()
+    def load_model(self):
+        tf_model = pickle.load(open(self.model_path, "rb"))
+        titles = pickle.load(open(self.titles_path, "rb"))
+
+        return(titles, tf_model)
+
+
+if __name__ == '__main__':
+    model = BoW()
+    model.create_model()
