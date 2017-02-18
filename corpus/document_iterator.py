@@ -1,8 +1,9 @@
 # Simple iterator that goes over every full text article in the database 
 # Uses the same parsing as the unlabled sentence iterator
-
 import sqlite3
 import re
+
+# Settings tells Documents where the database is located
 from context import settings
 
 conn = sqlite3.connect(settings.db)
@@ -10,11 +11,17 @@ curr = conn.cursor()
 
 
 class Documents:
-    def __init__(self):
-        q = (" SELECT  articleID, txt \n"
-             " FROM    articleTXT      \n"
-             " WHERE   articleID IN (SELECT DISTINCT(articleID) \n"
-             "                       FROM   OriginalKeywords)  ")
+    def __init__(self, n):
+        q = """ SELECT  articleID, txt
+                FROM    articleTXT     
+                WHERE   articleID IN 
+                       (SELECT  DISTINCT(articleID)
+                        FROM    OriginalKeywords 
+                        WHERE   keyword IN
+                               (SELECT  keyword
+                                FROM    OriginalKeywords 
+                                GROUP BY keyword 
+                                HAVING count(articleID) > {n})""".format(n=n)
 
         curr.execute(q)
         self.articles = curr.fetchall()
