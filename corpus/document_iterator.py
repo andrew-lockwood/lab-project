@@ -21,7 +21,7 @@ class Documents:
                                (SELECT  keyword
                                 FROM    OriginalKeywords 
                                 GROUP BY keyword 
-                                HAVING count(articleID) > {n})""".format(n=n)
+                                HAVING count(articleID) > {n}))""".format(n=n)
 
         curr.execute(q)
         self.articles = curr.fetchall()
