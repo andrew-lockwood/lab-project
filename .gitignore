@@ -16,7 +16,6 @@ models/bagofwordsmodels/*.pickle
 
 # Random Files 
 misc/*
-classifiers/misc/*
 
 # Bigram List (too large)
 normalization/bigrams.txt
