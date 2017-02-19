@@ -18,5 +18,5 @@ models/bagofwordsmodels/*.pickle
 misc/*
 
 # Bigram List (too large)
-normalization/bigrams.txt
-normalization/trigrams.txt
+corpus/n_grams/bigrams.txt
+corpus/n_grams/trigrams.txt
