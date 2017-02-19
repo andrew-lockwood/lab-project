@@ -4,7 +4,10 @@ __pycache__/
 *$py.class
 
 # Trained models
-models/doc2vecmodels/*
+models/doc2vecmodels/100model
+models/doc2vecmodels/300model
+models/doc2vecmodels/500model
+
 models/word2vecmodels/*
 models/bagofwordsmodels/*.pickle
 
