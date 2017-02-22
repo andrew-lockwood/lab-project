@@ -1,17 +1,12 @@
-# Simple iterator that goes over every full text article in the database 
-# Uses the same parsing as the unlabled sentence iterator
+from context import settings
 import sqlite3
 import re
 
-# Settings tells Documents where the database is located
-from context import settings
-
-conn = sqlite3.connect(settings.db)
-curr = conn.cursor()
-
-
-class Documents:
+class Documents():
     def __init__(self, n):
+        conn = sqlite3.connect(settings.db)
+        curr = conn.cursor()
+
         q = """ SELECT  articleID, txt
                 FROM    articleTXT     
                 WHERE   articleID IN 
@@ -32,3 +27,6 @@ class Documents:
             title = article[0]
 
             yield (title, parsed_article)
+
+if __name__ == '__main__':
+    pass

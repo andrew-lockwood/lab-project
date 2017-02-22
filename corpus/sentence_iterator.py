@@ -22,8 +22,15 @@ curr = conn.cursor()
 class UnlabeledSentences: 
     def __init__(self):
         q = """ SELECT  articleID, txt 
-                FROM    articleTXT    """
-                #WHERE   articleID='fpsyg.2010.00030'"""  # Set for testing
+                FROM    articleTXT
+                WHERE   articleID IN
+                       (SELECT  DISTINCT(articleID)
+                        FROM    OriginalKeywords 
+                        WHERE   keyword IN
+                               (SELECT  keyword
+                                FROM    OriginalKeywords 
+                                GROUP BY keyword 
+                                HAVING count(articleID) > {n}))""".format(n=n)
 
         curr.execute(q)
 
@@ -41,16 +48,22 @@ class UnlabeledSentences:
 
 
 class LabeledSentences: 
-    def __init__(self):
+    def __init__(self, n):
         q = """ SELECT  articleID, txt 
-                FROM    articleTXT      """
-                #WHERE   articleID='fpsyg.2010.00030'"""  # Set for testing
+                FROM    articleTXT      
+                WHERE   articleID IN
+                       (SELECT  DISTINCT(articleID)
+                        FROM    OriginalKeywords 
+                        WHERE   keyword IN
+                               (SELECT  keyword
+                                FROM    OriginalKeywords 
+                                GROUP BY keyword 
+                                HAVING count(articleID) > {n}))""".format(n=n)
 
         curr.execute(q)
 
         self.articles = curr.fetchall()
-        self.sent_detector = nltk.data.load(
-            'tokenizers\\punkt\\english.pickle')
+        self.sent_detector = nltk.data.load('tokenizers\\punkt\\english.pickle')
 
     def __iter__(self):
         for article in self.articles:
