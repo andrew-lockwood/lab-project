@@ -1,16 +1,29 @@
-from context import settings 
-
+from context import settings
+import pickle
 import gensim.models
-from random import shuffle
+from random import shuffle, sample
 import sqlite3
+import numpy as np 
 
 class DataLoader():
-    def __init__(self):
+    def __init__(self, n):
+        self.n = n
         self.conn = sqlite3.connect(settings.db)
         self.curr = self.conn.cursor()
 
-        self.datatype = None
-        self.data = []
+        q = """ SELECT  DISTINCT(articleID)
+                FROM    OriginalKeywords 
+                WHERE   keyword IN
+                       (SELECT  keyword
+                        FROM    OriginalKeywords 
+                        GROUP BY keyword 
+                        HAVING count(articleID) > {n})""".format(n=n)
+
+        self.valid_articles = set()
+        self.curr.execute(q)
+
+        for article in self.curr.fetchall():
+            self.valid_articles.add(article[0])
 
     def analyze(self, kwd):
         """Fetches original author assigned keywords."""
@@ -18,55 +31,48 @@ class DataLoader():
                 FROM    OriginalKeywords
                 WHERE   keyword='{k}'       """.format(k=kwd)
 
-        self.data.extend([(t[0],'1') for t in self.curr.execute(q).fetchall()])
+        positive_title_set = set([t[0] for t in self.curr.execute(q).fetchall()])
 
-        q = """ SELECT  DISTINCT(articleID)
-                FROM    OriginalKeywords
-                WHERE   articleID NOT IN
-                       (SELECT  articleID
-                        FROM    OriginalKeywords
-                        WHERE   keyword = '{k}')
-                ORDER BY RANDOM() LIMIT {n}""".format(k=kwd,n=len(self.data))
+        negative_title_set = sample(self.valid_articles.difference(positive_title_set), 
+                                    len(positive_title_set))
 
-        self.data.extend([(t[0],'0') for t in self.curr.execute(q).fetchall()])
-
+        p = [(t, "1") for t in positive_title_set]
+        n = [(t, "0") for t in negative_title_set]
+        self.data = p + n
         shuffle(self.data)
+
+    def get_title_dict(self):
+        return self.data
+
+    def load_text(self): 
+        q = """ SELECT  articleID, txt 
+                FROM    articleTXT
+                WHERE   articleID IN
+                       (SELECT  DISTINCT(articleID)
+                        FROM    OriginalKeywords 
+                        WHERE   keyword IN
+                               (SELECT  keyword
+                                FROM    OriginalKeywords 
+                                GROUP BY keyword 
+                                HAVING count(articleID) > {n}))""".format(n=self.n)
+
+        self.curr.execute(q)
+
+        return {i:t for i, t in self.curr.fetchall()}
+
+
+    def get_keywords(self):
+        q = """ SELECT  keyword
+                FROM    OriginalKeywords 
+                GROUP BY keyword 
+                HAVING count(articleID) > {n}""".format(n=self.n)
+
+        self.curr.execute(q)
+
+        kwds = [k[0] for k in self.curr.fetchall()]
+
+        return kwds
+
 
     def num_titles(self):
         return len(self.data)
-
-    def set_type(self, datatype):
-        self.datatype = datatype
-
-    def get_type(self):
-        return self.datatype
-
-    def __iter__(self):
-        if len(self.data) == 0: 
-            raise NotImplementedError("initialize data by calling a DataLoader class method")
-
-        # Return titles
-        elif self.datatype == None:
-            for t in self.data:
-                yield t
-
-        # Return full text
-        elif self.datatype == "text":
-            for title, label in self.data: 
-                q = """ SELECT  txt
-                        FROM    ArticleTXT
-                        WHERE   articleID='{id}'       """.format(id=title)
-
-                text = self.curr.execute(q).fetchall()[0][0]
-                yield (text, label)
-
-        # Return document vectors 
-        elif self.datatype == "vectors":
-            model = gensim.models.Word2Vec.load(settings.model)
-            for title, label in self.data: 
-                try:
-                    vector = model.docvecs[title[0:16]]
-                    yield(vector, label) 
-                except KeyError as e:
-                    print(title[0:16])
-
