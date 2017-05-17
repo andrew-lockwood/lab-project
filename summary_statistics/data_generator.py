@@ -1,5 +1,3 @@
-
-
 import sqlite3
 from context import settings
 import matplotlib.pyplot as plt
@@ -10,7 +8,7 @@ conn = sqlite3.connect(settings.db)
 curr = conn.cursor()
 
 
-class KeywordData():
+class KeywordData:
     def kwd_grams(self, distinct):
         if distinct:
             curr.execute("SELECT DISTINCT(keyword) FROM OriginalKeywords")
