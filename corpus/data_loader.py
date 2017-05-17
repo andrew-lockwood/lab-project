@@ -1,12 +1,15 @@
 from context import settings
-import pickle
-import gensim.models
 from random import shuffle, sample
 import sqlite3
-import numpy as np 
 
 class DataLoader():
-    def __init__(self, n):
+    """Class that interface with the database. When initialized, it retrieves articles
+     that have keywords that occur at least n times.
+    """
+    def __init__(self, n=70):
+        """70 is the default for testing. Do not change as it would require document vectors
+        to be recalculated.
+        """
         self.n = n
         self.conn = sqlite3.connect(settings.db)
         self.curr = self.conn.cursor()
@@ -44,7 +47,19 @@ class DataLoader():
     def get_title_dict(self):
         return self.data
 
-    def load_text(self): 
+
+    def load_text_by_id(self, title):
+        q = """ SELECT  txt
+                FROM    articleTXT
+                where   articleID = '{t}' """.format(t=title)
+
+        print(q)
+        self.curr.execute(q)
+
+        return self.curr.fetchall()[0][0]
+
+
+    def load_text_greater_than(self):
         q = """ SELECT  articleID, txt 
                 FROM    articleTXT
                 WHERE   articleID IN
@@ -76,3 +91,5 @@ class DataLoader():
 
     def num_titles(self):
         return len(self.data)
+
+
