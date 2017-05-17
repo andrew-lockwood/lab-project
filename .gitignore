@@ -24,3 +24,5 @@ misc/*
 corpus/n_grams/bigrams.txt
 corpus/n_grams/trigrams.txt
 
+# Testing
+classifiers/DBSCAN/*
