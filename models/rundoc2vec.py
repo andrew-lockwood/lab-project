@@ -2,7 +2,7 @@
 # Models: where models will be stored 
 # Scores: where model scores will be stored 
 
-from context import LabeledSentences
+from context import LabeledSentences, settings
 
 # De-comment to set up gensims native logging. Extremely useful when 
 # training models to visualize progress
@@ -19,10 +19,10 @@ import os
 import multiprocessing
 cores = multiprocessing.cpu_count() * 2
 
+
 class Doc2VecModel (object):    
     def __init__ (self, model_name):
-        cwd = 'C:\\Users\\Andrew\\lab_project\\models\\doc2vecmodels'
-        self.model_path = os.path.join(cwd, model_name)
+        self.model_path = os.path.join(settings.d2v, model_name)
         self.model_name = model_name
         self.model = None
 
@@ -38,7 +38,7 @@ class Doc2VecModel (object):
        
     def build_vocab (self):
         """Builds vocab from a SentenceLabels object."""
-        self.sentences = LabeledSentences()
+        self.sentences = LabeledSentences(70)
         self.model.build_vocab(self.sentences)
 
     def train_model (self):
@@ -90,5 +90,7 @@ class Doc2VecModel (object):
     def get_wordvec (self, word): 
         return self.model.syn0[word]
 
-d2v = Doc2VecModel('300model')
-d2v.create_build_train_model(300)
+
+if __name__ == '__main__':
+    d2v = Doc2VecModel('300model')
+    d2v.create_build_train_model(300)
