@@ -17,6 +17,10 @@ models/bagofwordsmodels/*.pickle
 # Random Files 
 misc/*
 
+# PyCharm Files
+.idea/*
+
 # Bigram List (too large)
 corpus/n_grams/bigrams.txt
 corpus/n_grams/trigrams.txt
+
