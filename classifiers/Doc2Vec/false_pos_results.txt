@@ -1,0 +1,77 @@
+fpsyg.2014.00398 1.0 384 384
+fpsyg.2016.00678 1.0 365 365
+fpsyg.2014.01367 1.0 371 371
+fpsyg.2016.00210 1.0 374 374
+fpsyg.2014.01539 1.0 407 407
+fpsyg.2012.00115 1.0 386 386
+fpsyg.2011.00351 0.9975728155339806 411 412
+fpsyg.2016.01035 0.9951690821256038 412 414
+fpsyg.2015.00351 0.9950372208436724 401 403
+fpsyg.2015.01899 0.9876543209876543 400 405
+fpsyg.2013.00689 0.9731051344743277 398 409
+fpsyg.2014.00651 0.9728260869565217 358 368
+fpsyg.2016.00939 0.9608938547486033 344 358
+fpsyg.2011.00227 0.9483695652173914 349 368
+fpsyg.2016.00813 0.9363867684478372 368 393
+fpsyg.2015.01801 0.931129476584022 338 363
+fpsyg.2014.00550 0.8925831202046036 349 391
+fpsyg.2012.00479 0.8741092636579573 368 421
+fpsyg.2015.01843 0.8650793650793651 327 378
+fpsyg.2013.00942 0.8582474226804123 333 388
+149.55534267425537
+
+
+fpsyg.2014.00398 fpsyg.2016.00678 fpsyg.2014.01367 fpsyg.2016.00210 fpsyg.2014.01539 fpsyg.2012.00115
+
+
+
+
+fpsyg.2011.00351 fpsyg.2016.01035 fpsyg.2015.00351 fpsyg.2015.01899 fpsyg.2013.00689 fpsyg.2014.00651 fpsyg.2016.00939 fpsyg.2011.00227 fpsyg.2016.00813 fpsyg.2015.01801 fpsyg.2014.00550 fpsyg.2012.00479 fpsyg.2015.01843 fpsyg.2013.00942
+
+
+------------------------------------
+Title: The Time Course of Emotion Effects in First and Second Language Processing: A Cross Cultural ERP Study with German Spanish Bilinguals
+Keywords: emotion,visual word recognition,bilinguals,second language processing,ERPs
+------------------------------------
+Title: Editorial: Linguistic Influences on Mathematics
+Keywords: language,numerical cognition,psychology of arithmetic,verbal counting systems,cross-linguistic research
+------------------------------------
+Title: The way you say it, the way I feel it: emotional word processing in accented speech
+Keywords: emotion,affective valence,native and foreign accent,spoken word processing,event-related potentials
+------------------------------------
+Title: Editorial: Phonological and Phonetic Competence: Between Grammar, Signal Processing, and Neural Activity
+Keywords: prosody,phonetics,phonology,speech perception,speech production,language development,language change
+------------------------------------
+Title: Word frequency cues word order in adults: cross-linguistic evidence
+Keywords: language acquisition,speech perception,morphosyntax,cross-linguistic analysis,word frequency,corpus analysis,anchoring hypothesis
+------------------------------------
+Title: The influence of non-native language proficiency on speech perception performance
+Keywords: English proficiency,native,non-native,speech perception,informational masking,energetic masking,working memory
+------------------------------------
+Title: Exaggeration of Language-Specific Rhythms in English and French Children's Songs
+Keywords: rhythm,development,infancy,music,speech,infant-directed modification
+------------------------------------
+Title: Abstract and Concrete Sentences, Embodiment, and Languages
+Keywords: abstract concepts,embodiment,sociallinguistic experience,cross-language comparison,parallel processing
+------------------------------------
+Title: Distinct Effects of Lexical and Semantic Competition during Picture Naming in Younger Adults, Older Adults, and People with Aphasia
+Keywords: word selection,lexical access,semantics,picture naming,aging,aphasia,left prefrontal cortex
+------------------------------------
+Title: Syllable Structure Universals and Native Language Interference in Second Language Perception and Production: Positional Asymmetry and Perc
+eptual Links to Accentedness
+Keywords: native language neural commitment,phonetic learning,speech perception,speech production,accentedness,syllable structure,allophonic vari
+ations
+------------------------------------
+Title: Executive functioning and reading achievement in school: a study of Brazilian children assessed by their teachers as poor readers
+Keywords: executive function,reading,working memory,cognitive flexibility,selective attention,inhibition,poverty,learning difficulties
+------------------------------------
+Title: Linguistic Processing of Accented Speech Across the Lifespan
+Keywords: infancy,childhood,aging,accent adaptation,speech perception
+------------------------------------
+Title: Spelling Acquisition in English and Italian: A Cross-Linguistic Study
+Keywords: spelling acquisition,orthographic consistency,cross-linguistic comparison,lexical effects,children
+------------------------------------
+Title: Similar digit-based working memory in deaf signers and hearing non-signers despite digit span differences
+Keywords: deaf signers,working memory,short-term memory,phonological similarity,cross-culture
+------------------------------------
+

@@ -122,10 +122,10 @@ def run_tests(iterations, file_name, text_transformer):
 
             w.writerow(row)
 
-    elapsed_time = t0 - time()
+    elapsed_time = time() - t0
     print("Elapsed Time : %0.3f" % elapsed_time)
 
 
 if __name__ == '__main__':
-    run_tests(20, "bow_tfidf.csv", TfidfVectorizer())
-    run_tests(20, "bow.csv", CountVectorizer())
+    run_tests(100, "bow_tfidf_test_3.csv", TfidfVectorizer())
+    #run_tests(20, "bow.csv", CountVectorizer())

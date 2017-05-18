@@ -1,5 +1,6 @@
 from context import settings
 from random import shuffle, sample
+import re
 import sqlite3
 
 class DataLoader():
@@ -10,7 +11,10 @@ class DataLoader():
         """70 is the default for testing. Do not change as it would require document vectors
         to be recalculated.
         """
+        self.data = None
+
         self.n = n
+
         self.conn = sqlite3.connect(settings.db)
         self.curr = self.conn.cursor()
 
@@ -36,13 +40,28 @@ class DataLoader():
 
         positive_title_set = set([t[0] for t in self.curr.execute(q).fetchall()])
 
-        negative_title_set = sample(self.valid_articles.difference(positive_title_set), 
+        negative_title_set = sample(self.valid_articles.difference(positive_title_set),
                                     len(positive_title_set))
 
         p = [(t, "1") for t in positive_title_set]
         n = [(t, "0") for t in negative_title_set]
         self.data = p + n
         shuffle(self.data)
+
+
+    def get_positive_title_set(self, kwd):
+        q = """ SELECT  articleID
+                FROM    OriginalKeywords
+                WHERE   keyword='{k}'       """.format(k=kwd)
+
+        return set([t[0] for t in self.curr.execute(q).fetchall()])
+
+
+    def get_negative_title_set(self, kwd):
+        positive_title_set = self.get_positive_title_set(kwd)
+
+        return self.valid_articles.difference(positive_title_set)
+
 
     def get_title_dict(self):
         return self.data
@@ -53,7 +72,6 @@ class DataLoader():
                 FROM    articleTXT
                 where   articleID = '{t}' """.format(t=title)
 
-        print(q)
         self.curr.execute(q)
 
         return self.curr.fetchall()[0][0]
@@ -92,4 +110,23 @@ class DataLoader():
     def num_titles(self):
         return len(self.data)
 
+    def article_title_keywords(self, articleID):
+        q = """ SELECT  title
+                FROM    ArticleInformation
+                WHERE   articleID = '{t}'""".format(t=articleID)
 
+        self.curr.execute(q)
+
+        title = self.curr.fetchall()[0][0]
+
+        q = """ SELECT  GROUP_CONCAT(keyword)
+                FROM    OriginalKeywords
+                WHERE   articleID = '{t}'
+                GROUP BY    articleID""".format(t=articleID)
+        self.curr.execute(q)
+
+        kwds = self.curr.fetchall()[0][0]
+
+        parsed_kwds = re.sub(',', ';', kwds)
+
+        return title, parsed_kwds
